@@ -4,7 +4,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Welcome to my first API!"
+    return "Welcome to jade's API mweehehehehe!"
 
 @app.route('/student')
 def get_student():
