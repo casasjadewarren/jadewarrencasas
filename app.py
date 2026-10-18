@@ -34,15 +34,13 @@ def get_students():
 
 
 # Get one student by database ID
+
 @app.route("/students/<int:id>")
 def get_student_by_id(id):
     conn = get_db_connection()
-
     student = conn.execute(
-        "SELECT * FROM students WHERE id = ?",
-        (id,)
+        "SELECT * FROM students WHERE id = ?", (id,)
     ).fetchone()
-
     conn.close()
 
     if student is None:
