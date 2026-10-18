@@ -4,13 +4,13 @@ from flask import Flask, jsonify, request, render_template
 app = Flask(__name__)
 
 
-# Home Page
+# Home page
 @app.route('/')
 def home():
     return render_template('index.html')
 
 
-# Student API
+# Student Information API
 @app.route('/student')
 def get_student():
     return jsonify({
@@ -22,16 +22,17 @@ def get_student():
     })
 
 
-# Hello API
+# Greeting API
 @app.route('/hello')
 def say_hello():
     name = request.args.get('name', 'Student')
+
     return jsonify({
         "message": f"Hello, {name}!"
     })
 
 
-# Course API
+# Custom API - Course Information
 @app.route('/course')
 def get_course():
     return jsonify({
@@ -42,7 +43,7 @@ def get_course():
     })
 
 
-# Profile API
+# Custom API - Student Profile
 @app.route('/profile')
 def get_profile():
     return jsonify({
@@ -56,10 +57,11 @@ def get_profile():
     })
 
 
-# Greetings API
+# Additional Greeting Endpoint
 @app.route('/greetings')
 def greetings():
     name = request.args.get('name', 'Student')
+
     return jsonify({
         "greeting": f"Good day, {name}!",
         "message": "Welcome to the Flask API."

@@ -34,6 +34,7 @@
             padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 5px;
         }
 
         button:hover {
@@ -47,23 +48,27 @@
             margin: 5px 0;
         }
 
-        #result, #greeting {
+        #result, #greeting, #courseResult {
             margin-top: 15px;
             line-height: 1.6;
         }
 
         hr {
             margin: 25px 0;
+            border: 0;
+            border-top: 1px solid #ddd;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
+
         <h1>Student API Interface</h1>
 
-        <!-- Student API -->
+        <!-- Student Information API -->
         <h2>Student Information</h2>
+
         <button onclick="loadStudent()">
             Load Student Information
         </button>
@@ -84,6 +89,18 @@
         <button onclick="sayHello()">Say Hello</button>
 
         <p id="greeting"></p>
+
+        <hr>
+
+        <!-- Additional Task: Custom Course API -->
+        <h2>Custom API - Course Information</h2>
+
+        <button onclick="loadCourse()">
+            Load Course Information
+        </button>
+
+        <div id="courseResult"></div>
+
     </div>
 
     <script>
@@ -92,12 +109,15 @@
             fetch('/student')
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error("Failed to load student data");
+                        throw new Error('Failed to load student data');
                     }
+
                     return response.json();
                 })
                 .then(data => {
-                    document.getElementById('result').innerHTML =
+                    const result = document.getElementById('result');
+
+                    result.innerHTML =
                         '<p><b>Student ID:</b> ' + data.student_id + '</p>' +
                         '<p><b>Name:</b> ' + data.name + '</p>' +
                         '<p><b>Program:</b> ' + data.program + '</p>' +
@@ -107,9 +127,11 @@
                 .catch(error => {
                     document.getElementById('result').innerText =
                         'Unable to retrieve student data.';
+
                     console.error(error);
                 });
         }
+
 
         // Greeting API
         function sayHello() {
@@ -121,8 +143,9 @@
             fetch('/hello?name=' + encodeURIComponent(queryName))
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error("Failed to load greeting");
+                        throw new Error('Failed to load greeting');
                     }
+
                     return response.json();
                 })
                 .then(data => {
@@ -131,6 +154,36 @@
                 .catch(error => {
                     greeting.innerText =
                         'Unable to retrieve greeting.';
+
+                    console.error(error);
+                });
+        }
+
+
+        // Additional Task: Custom Course API
+        function loadCourse() {
+            fetch('/course')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load course data');
+                    }
+
+                    return response.json();
+                })
+                .then(data => {
+                    const courseResult =
+                        document.getElementById('courseResult');
+
+                    courseResult.innerHTML =
+                        '<p><b>Course Code:</b> ' + data.course_code + '</p>' +
+                        '<p><b>Course Name:</b> ' + data.course_name + '</p>' +
+                        '<p><b>Units:</b> ' + data.units + '</p>' +
+                        '<p><b>Description:</b> ' + data.description + '</p>';
+                })
+                .catch(error => {
+                    document.getElementById('courseResult').innerText =
+                        'Unable to retrieve course data.';
+
                     console.error(error);
                 });
         }
