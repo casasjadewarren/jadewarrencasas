@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student API Interface</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f4f8;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #234a76;
+        }
+
+        button {
+            background-color: #2463a6;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #174675;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+
+        #result, #greeting {
+            margin-top: 15px;
+            line-height: 1.6;
+        }
+
+        hr {
+            margin: 25px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Student API Interface</h1>
+
+        <!-- Student API -->
+        <h2>Student Information</h2>
+        <button onclick="loadStudent()">
+            Load Student Information
+        </button>
+
+        <div id="result"></div>
+
+        <hr>
+
+        <!-- Greeting API -->
+        <h2>Greeting API</h2>
+
+        <input
+            type="text"
+            id="nameInput"
+            placeholder="Enter your name"
+        >
+
+        <button onclick="sayHello()">Say Hello</button>
+
+        <p id="greeting"></p>
+    </div>
+
+    <script>
+        // Load Student Information
+        function loadStudent() {
+            fetch('/student')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to load student data");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('result').innerHTML =
+                        '<p><b>Student ID:</b> ' + data.student_id + '</p>' +
+                        '<p><b>Name:</b> ' + data.name + '</p>' +
+                        '<p><b>Program:</b> ' + data.program + '</p>' +
+                        '<p><b>Year:</b> ' + data.year + '</p>' +
+                        '<p><b>Section:</b> ' + data.section + '</p>';
+                })
+                .catch(error => {
+                    document.getElementById('result').innerText =
+                        'Unable to retrieve student data.';
+                    console.error(error);
+                });
+        }
+
+        // Greeting API
+        function sayHello() {
+            const name = document.getElementById('nameInput').value.trim();
+            const greeting = document.getElementById('greeting');
+
+            const queryName = name || 'Student';
+
+            fetch('/hello?name=' + encodeURIComponent(queryName))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to load greeting");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    greeting.innerText = data.message;
+                })
+                .catch(error => {
+                    greeting.innerText =
+                        'Unable to retrieve greeting.';
+                    console.error(error);
+                });
+        }
+    </script>
+</body>
+</html>
