@@ -1,72 +1,71 @@
 
+import sqlite3
 from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 
+DATABASE = "students.db"
+
+
+def get_db_connection():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
 
 # Home page
-@app.route('/')
+@app.route("/")
 def home():
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-# Student Information API
-@app.route('/student')
-def get_student():
-    return jsonify({
-        "student_id": "24-00176",
-        "name": "Jad Warren Casas",
-        "program": "BSIT",
-        "year": 3,
-        "section": "A"
-    })
+# Get all students
+@app.route("/students")
+def get_students():
+    conn = get_db_connection()
+
+    students = conn.execute(
+        "SELECT * FROM students ORDER BY id"
+    ).fetchall()
+
+    conn.close()
+
+    return jsonify([dict(student) for student in students])
 
 
-# Greeting API
-@app.route('/hello')
-def say_hello():
-    name = request.args.get('name', 'Student')
+# Get one student by database ID
+@app.route("/students/<int:id>")
+def get_student_by_id(id):
+    conn = get_db_connection()
 
-    return jsonify({
-        "message": f"Hello, {name}!"
-    })
+    student = conn.execute(
+        "SELECT * FROM students WHERE id = ?",
+        (id,)
+    ).fetchone()
 
+    conn.close()
 
-# Custom API - Course Information
-@app.route('/course')
-def get_course():
-    return jsonify({
-        "course_code": "IT 301",
-        "course_name": "Web Development",
-        "units": 3,
-        "description": "Introduction to web development and API creation using Flask."
-    })
+    if student is None:
+        return jsonify({"error": "Student not found"}), 404
+
+    return jsonify(dict(student))
 
 
-# Custom API - Student Profile
-@app.route('/profile')
-def get_profile():
-    return jsonify({
-        "student_id": "24-00176",
-        "name": "Jad Warren Casas",
-        "program": "BSIT",
-        "year": 3,
-        "section": "A",
-        "course": "Web Development",
-        "role": "Student"
-    })
+# Additional task: Get students by section
+# Example: /students/section/A
+@app.route("/students/section/<string:section>")
+def get_students_by_section(section):
+    conn = get_db_connection()
+
+    students = conn.execute(
+        "SELECT * FROM students WHERE section = ? ORDER BY id",
+        (section,)
+    ).fetchall()
+
+    conn.close()
+
+    return jsonify([dict(student) for student in students])
 
 
-# Additional Greeting Endpoint
-@app.route('/greetings')
-def greetings():
-    name = request.args.get('name', 'Student')
-
-    return jsonify({
-        "greeting": f"Good day, {name}!",
-        "message": "Welcome to the Flask API."
-    })
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)

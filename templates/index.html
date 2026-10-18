@@ -4,21 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student API Interface</title>
+
+    <title>Student Database Interface</title>
 
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f2f4f8;
             margin: 0;
-            padding: 30px;
+            padding: 25px;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 750px;
             margin: auto;
-            background-color: white;
             padding: 25px;
+            background-color: white;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
@@ -28,27 +29,36 @@
         }
 
         button {
+            padding: 10px 15px;
             background-color: #2463a6;
             color: white;
             border: none;
-            padding: 10px 15px;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 5px;
+            margin: 5px 0;
         }
 
         button:hover {
             background-color: #174675;
         }
 
-        input {
+        input, select {
             padding: 10px;
+            margin: 5px 0;
             border: 1px solid #ccc;
             border-radius: 5px;
-            margin: 5px 0;
         }
 
-        #result, #greeting, #courseResult {
+        .student {
+            padding: 12px;
+            margin: 10px 0;
+            background-color: #f2f6fb;
+            border-left: 4px solid #2463a6;
+            border-radius: 4px;
+            overflow-wrap: anywhere;
+        }
+
+        .result {
             margin-top: 15px;
             line-height: 1.6;
         }
@@ -62,131 +72,182 @@
 </head>
 
 <body>
-    <div class="container">
+<div class="container">
 
-        <h1>Student API Interface</h1>
+    <h1>Student Database Interface</h1>
+    <p>Laboratory Activity 7: Integrating SQLite with Flask API</p>
 
-        <!-- Student Information API -->
-        <h2>Student Information</h2>
+    <!-- Display all students -->
+    <h2>All Students</h2>
 
-        <button onclick="loadStudent()">
-            Load Student Information
-        </button>
+    <button onclick="loadStudents()">Load Students</button>
+    <div id="studentList" class="result"></div>
 
-        <div id="result"></div>
+    <hr>
 
-        <hr>
+    <!-- Find one student -->
+    <h2>Find Student by ID</h2>
 
-        <!-- Greeting API -->
-        <h2>Greeting API</h2>
+    <input
+        type="number"
+        id="studentId"
+        min="1"
+        placeholder="Enter database ID"
+    >
 
-        <input
-            type="text"
-            id="nameInput"
-            placeholder="Enter your name"
-        >
+    <button onclick="findStudent()">Find Student</button>
+    <div id="singleStudent" class="result"></div>
 
-        <button onclick="sayHello()">Say Hello</button>
+    <hr>
 
-        <p id="greeting"></p>
+    <!-- Additional task: Filter by section -->
+    <h2>Filter Students by Section</h2>
 
-        <hr>
+    <label for="sectionInput">Select section:</label>
 
-        <!-- Additional Task: Custom Course API -->
-        <h2>Custom API - Course Information</h2>
+    <select id="sectionInput">
+        <option value="A">Section A</option>
+        <option value="B">Section B</option>
+    </select>
 
-        <button onclick="loadCourse()">
-            Load Course Information
-        </button>
+    <button onclick="filterStudents()">Filter Students</button>
+    <div id="sectionResults" class="result"></div>
 
-        <div id="courseResult"></div>
+</div>
 
-    </div>
+<script>
+    // Load all students from the database
+    async function loadStudents() {
+        const output = document.getElementById("studentList");
+        output.textContent = "Loading students...";
 
-    <script>
-        // Load Student Information
-        function loadStudent() {
-            fetch('/student')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load student data');
-                    }
+        try {
+            const response = await fetch("/students");
 
-                    return response.json();
-                })
-                .then(data => {
-                    const result = document.getElementById('result');
+            if (!response.ok) {
+                throw new Error("Failed to load students");
+            }
 
-                    result.innerHTML =
-                        '<p><b>Student ID:</b> ' + data.student_id + '</p>' +
-                        '<p><b>Name:</b> ' + data.name + '</p>' +
-                        '<p><b>Program:</b> ' + data.program + '</p>' +
-                        '<p><b>Year:</b> ' + data.year + '</p>' +
-                        '<p><b>Section:</b> ' + data.section + '</p>';
-                })
-                .catch(error => {
-                    document.getElementById('result').innerText =
-                        'Unable to retrieve student data.';
+            const students = await response.json();
 
-                    console.error(error);
-                });
+            output.replaceChildren();
+
+            if (students.length === 0) {
+                output.textContent = "No student records found.";
+                return;
+            }
+
+            students.forEach(student => {
+                const card = document.createElement("div");
+                card.className = "student";
+
+                const details = document.createElement("p");
+                details.textContent =
+                    "Database ID: " + student.id +
+                    " | Student ID: " + student.student_id +
+                    " | Name: " + student.name +
+                    " | Program: " + student.program +
+                    " | Year: " + student.year +
+                    " | Section: " + student.section;
+
+                card.appendChild(details);
+                output.appendChild(card);
+            });
+
+        } catch (error) {
+            output.textContent = "Unable to retrieve student records.";
+            console.error(error);
+        }
+    }
+
+
+    // Find one student by database ID
+    async function findStudent() {
+        const id = document.getElementById("studentId").value.trim();
+        const output = document.getElementById("singleStudent");
+
+        if (!id || !Number.isInteger(Number(id)) || Number(id) < 1) {
+            output.textContent = "Please enter a valid database ID.";
+            return;
         }
 
+        output.textContent = "Searching...";
 
-        // Greeting API
-        function sayHello() {
-            const name = document.getElementById('nameInput').value.trim();
-            const greeting = document.getElementById('greeting');
+        try {
+            const response = await fetch(
+                "/students/" + encodeURIComponent(id)
+            );
 
-            const queryName = name || 'Student';
+            const data = await response.json();
 
-            fetch('/hello?name=' + encodeURIComponent(queryName))
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load greeting');
-                    }
+            if (!response.ok) {
+                output.textContent = data.error || "Student not found.";
+                return;
+            }
 
-                    return response.json();
-                })
-                .then(data => {
-                    greeting.innerText = data.message;
-                })
-                .catch(error => {
-                    greeting.innerText =
-                        'Unable to retrieve greeting.';
+            output.textContent =
+                "Student ID: " + data.student_id +
+                " | Name: " + data.name +
+                " | Program: " + data.program +
+                " | Year: " + data.year +
+                " | Section: " + data.section;
 
-                    console.error(error);
-                });
+        } catch (error) {
+            output.textContent = "Unable to retrieve student.";
+            console.error(error);
         }
+    }
 
 
-        // Additional Task: Custom Course API
-        function loadCourse() {
-            fetch('/course')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load course data');
-                    }
+    // Additional task: Filter students by section
+    async function filterStudents() {
+        const section = document.getElementById("sectionInput").value;
+        const output = document.getElementById("sectionResults");
 
-                    return response.json();
-                })
-                .then(data => {
-                    const courseResult =
-                        document.getElementById('courseResult');
+        output.textContent = "Loading section records...";
 
-                    courseResult.innerHTML =
-                        '<p><b>Course Code:</b> ' + data.course_code + '</p>' +
-                        '<p><b>Course Name:</b> ' + data.course_name + '</p>' +
-                        '<p><b>Units:</b> ' + data.units + '</p>' +
-                        '<p><b>Description:</b> ' + data.description + '</p>';
-                })
-                .catch(error => {
-                    document.getElementById('courseResult').innerText =
-                        'Unable to retrieve course data.';
+        try {
+            const response = await fetch(
+                "/students/section/" + encodeURIComponent(section)
+            );
 
-                    console.error(error);
-                });
+            if (!response.ok) {
+                throw new Error("Failed to load section records");
+            }
+
+            const students = await response.json();
+
+            output.replaceChildren();
+
+            if (students.length === 0) {
+                output.textContent =
+                    "No students found in Section " + section + ".";
+                return;
+            }
+
+            students.forEach(student => {
+                const card = document.createElement("div");
+                card.className = "student";
+
+                const details = document.createElement("p");
+                details.textContent =
+                    student.student_id + " - " +
+                    student.name + " | " +
+                    student.program + " | Year " +
+                    student.year + " | Section " +
+                    student.section;
+
+                card.appendChild(details);
+                output.appendChild(card);
+            });
+
+        } catch (error) {
+            output.textContent =
+                "Unable to retrieve section records.";
+            console.error(error);
         }
-    </script>
+    }
+</script>
+
 </body>
 </html>
