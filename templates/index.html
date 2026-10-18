@@ -4,234 +4,717 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Database Interface</title>
+    <title>StudentHub | Student Database</title>
 
     <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #3730a3;
+            --secondary: #7c3aed;
+            --background: #f5f7ff;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --success: #059669;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f2f4f8;
-            color: #222;
             margin: 0;
-            padding: 25px;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #3730a3, #4f46e5, #7c3aed);
+            color: white;
+            padding: 35px 20px 65px;
+        }
+
+        .hero-inner,
+        .container {
+            width: min(1100px, 100%);
+            margin: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 19px;
+            font-weight: 800;
+            letter-spacing: 0.4px;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: rgba(255, 255, 255, 0.18);
+            font-size: 23px;
+        }
+
+        .hero h1 {
+            font-size: clamp(28px, 5vw, 42px);
+            margin: 35px 0 10px;
+        }
+
+        .hero p {
+            color: #e0e7ff;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-bottom: 0;
         }
 
         .container {
-            max-width: 750px;
-            margin: auto;
-            padding: 25px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 0 20px 40px;
+            margin-top: -32px;
         }
 
-        h1, h2 {
-            color: #234a76;
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 22px;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.06);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            display: block;
+            margin-top: 8px;
+            font-size: 29px;
+            font-weight: 800;
+        }
+
+        .stat-icon {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 25px;
+            margin-bottom: 22px;
+            box-shadow: 0 5px 20px rgba(30, 41, 59, 0.04);
+        }
+
+        .panel-heading {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .panel-icon {
+            flex-shrink: 0;
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            background: #eef2ff;
+            border-radius: 12px;
+            font-size: 21px;
+        }
+
+        h2 {
+            font-size: 20px;
+            margin: 0 0 6px;
+        }
+
+        .description {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input,
+        select {
+            min-height: 46px;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            background: white;
+            color: var(--text);
+            font-size: 15px;
+            outline: none;
+        }
+
+        input {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        select {
+            min-width: 150px;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
         }
 
         button {
-            padding: 10px 15px;
-            background: #2463a6;
+            min-height: 44px;
+            border: 0;
+            border-radius: 10px;
+            padding: 11px 17px;
+            background: var(--primary);
             color: white;
-            border: none;
-            border-radius: 5px;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
-            margin: 5px 0;
+            transition: transform 0.15s, background 0.15s;
         }
 
         button:hover {
-            background: #174675;
+            background: var(--primary-dark);
+            transform: translateY(-1px);
         }
 
-        input, select {
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+        button:disabled {
+            opacity: 0.6;
+            cursor: wait;
+            transform: none;
         }
 
-        .student {
-            padding: 12px;
-            margin: 10px 0;
-            background: #f2f6fb;
-            border-left: 4px solid #2463a6;
-            border-radius: 4px;
+        .secondary-button {
+            color: var(--primary);
+            background: #eef2ff;
+        }
+
+        .secondary-button:hover {
+            background: #e0e7ff;
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(235px, 1fr));
+            gap: 15px;
+        }
+
+        .student-card {
+            padding: 19px;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: box-shadow 0.2s, transform 0.2s;
+            min-width: 0;
+        }
+
+        .student-card:hover {
+            box-shadow: 0 8px 22px rgba(79, 70, 229, 0.09);
+            transform: translateY(-2px);
+        }
+
+        .student-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .avatar {
+            width: 47px;
+            height: 47px;
+            flex-shrink: 0;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            color: #4338ca;
+            background: #e0e7ff;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .student-name {
+            font-size: 16px;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+            text-transform: capitalize;
+        }
+
+        .student-number {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .details {
+            display: grid;
+            gap: 11px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .detail-label {
+            color: var(--muted);
+        }
+
+        .detail-value {
+            font-weight: 700;
+            text-align: right;
             overflow-wrap: anywhere;
         }
 
-        .result {
-            margin-top: 15px;
-            line-height: 1.6;
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #ecfdf5;
+            color: #047857;
+            font-size: 12px;
+            font-weight: 800;
         }
 
-        hr {
-            margin: 25px 0;
-            border: 0;
-            border-top: 1px solid #ddd;
+        .empty-state {
+            text-align: center;
+            color: var(--muted);
+            background: #f8fafc;
+            padding: 27px 15px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            line-height: 1.7;
+        }
+
+        .empty-icon {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .error-text {
+            color: #b91c1c;
+            background: #fef2f2;
+            padding: 13px;
+            border-radius: 9px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: #f3e8ff;
+            color: #6b21a8;
+            border-radius: 7px;
+            padding: 5px 9px;
+            font-size: 12px;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px 10px 30px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding: 25px 18px 55px;
+            }
+
+            .container {
+                padding: 0 12px 25px;
+            }
+
+            .stats {
+                gap: 8px;
+            }
+
+            .stat-card {
+                padding: 13px 10px;
+            }
+
+            .stat-value {
+                font-size: 23px;
+            }
+
+            .stat-label {
+                font-size: 11px;
+            }
+
+            .panel {
+                padding: 17px;
+            }
+
+            .controls {
+                align-items: stretch;
+            }
+
+            .controls input,
+            .controls select,
+            .controls button {
+                width: 100%;
+            }
         }
     </style>
 </head>
 
 <body>
-<div class="container">
 
-    <h1>Student Database Interface</h1>
-    <p>Laboratory Activity 7: Integrating SQLite with Flask API</p>
+<header class="hero">
+    <div class="hero-inner">
+        <div class="brand">
+            <div class="brand-icon">🎓</div>
+            <span>StudentHub</span>
+        </div>
 
-    <h2>All Students</h2>
-    <button onclick="loadStudents()">Load Students</button>
-    <div id="studentList" class="result"></div>
+        <h1>Student Database</h1>
+        <p>
+            Manage, search, and explore student records in one place.
+            Access student information quickly using the database API.
+        </p>
+    </div>
+</header>
 
-    <hr>
+<main class="container">
 
-    <h2>Find Student by Database ID</h2>
-    <input
-        type="number"
-        id="studentId"
-        min="1"
-        placeholder="Enter ID (1-5)"
-    >
-    <button onclick="findStudent()">Find Student</button>
-    <div id="singleStudent" class="result"></div>
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <span class="stat-label">Total Students</span>
+            <span class="stat-value" id="totalCount">—</span>
+        </div>
 
-    <hr>
+        <div class="stat-card">
+            <div class="stat-icon">💻</div>
+            <span class="stat-label">BSIT Students</span>
+            <span class="stat-value" id="bsitCount">—</span>
+        </div>
 
-    <h2>Filter Students by Section</h2>
-    <label for="sectionInput">Select section:</label>
-    <select id="sectionInput">
-        <option value="A">Section A</option>
-        <option value="B">Section B</option>
-    </select>
-    <button onclick="filterStudents()">Filter Students</button>
-    <div id="sectionResults" class="result"></div>
+        <div class="stat-card">
+            <div class="stat-icon">🏫</div>
+            <span class="stat-label">Sections</span>
+            <span class="stat-value">2</span>
+        </div>
+    </div>
 
-</div>
+    <!-- All students -->
+    <section class="panel">
+        <div class="panel-heading">
+            <div class="panel-icon">📋</div>
+            <div>
+                <h2>All Students</h2>
+                <p class="description">
+                    View all records saved in the SQLite database.
+                </p>
+            </div>
+        </div>
+
+        <button id="loadButton" onclick="loadStudents()">
+            Load Students
+        </button>
+
+        <div id="allStudents" class="results">
+            <div class="empty-state">
+                <div class="empty-icon">📚</div>
+                Click "Load Students" to display student records.
+            </div>
+        </div>
+    </section>
+
+    <!-- Search student -->
+    <section class="panel">
+        <div class="panel-heading">
+            <div class="panel-icon">🔎</div>
+            <div>
+                <h2>Find a Student</h2>
+                <p class="description">
+                    Search by database ID, such as 1, 2, 3, 4, or 5.
+                </p>
+            </div>
+        </div>
+
+        <form id="searchForm" class="controls">
+            <input
+                type="number"
+                id="studentId"
+                min="1"
+                placeholder="Enter database ID..."
+                aria-label="Database ID"
+                required
+            >
+            <button type="submit">Search Student</button>
+        </form>
+
+        <div id="studentResult" class="results" aria-live="polite">
+            <div class="empty-state">
+                <div class="empty-icon">👤</div>
+                Search for a student to see their information.
+            </div>
+        </div>
+    </section>
+
+    <!-- Additional task -->
+    <section class="panel">
+        <div class="panel-heading">
+            <div class="panel-icon">🎯</div>
+            <div>
+                <span class="section-tag">ADDITIONAL TASK</span>
+                <h2>Filter by Section</h2>
+                <p class="description">
+                    Display only the students belonging to your chosen section.
+                </p>
+            </div>
+        </div>
+
+        <form id="filterForm" class="controls">
+            <select id="sectionFilter" aria-label="Choose section">
+                <option value="A">Section A</option>
+                <option value="B">Section B</option>
+            </select>
+            <button type="submit">Apply Filter</button>
+        </form>
+
+        <div id="sectionResults" class="results" aria-live="polite">
+            <div class="empty-state">
+                <div class="empty-icon">🗂️</div>
+                Choose a section and click "Apply Filter".
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    <strong>StudentHub</strong> · Laboratory Activity 7<br>
+    SQLite Database and Flask REST API
+</footer>
 
 <script>
-    // Load all students
-    async function loadStudents() {
-        const output = document.getElementById("studentList");
-        output.textContent = "Loading students...";
+    function showMessage(container, message, isError = false) {
+        container.replaceChildren();
 
-        try {
-            const response = await fetch("/students");
+        const box = document.createElement("div");
+        box.className = isError ? "error-text" : "empty-state";
+        box.textContent = message;
 
-            if (!response.ok) {
-                throw new Error("Unable to load students");
-            }
-
-            const students = await response.json();
-            output.replaceChildren();
-
-            if (students.length === 0) {
-                output.textContent = "No student records found.";
-                return;
-            }
-
-            students.forEach(student => {
-                const card = document.createElement("div");
-                card.className = "student";
-
-                const details = document.createElement("p");
-                details.textContent =
-                    "Database ID: " + student.id +
-                    " | Student ID: " + student.student_id +
-                    " | Name: " + student.name +
-                    " | Program: " + student.program +
-                    " | Year: " + student.year +
-                    " | Section: " + student.section;
-
-                card.appendChild(details);
-                output.appendChild(card);
-            });
-        } catch (error) {
-            output.textContent = "Unable to retrieve student records.";
-            console.error(error);
-        }
+        container.appendChild(box);
     }
 
+    function createStudentCard(student) {
+        const card = document.createElement("article");
+        card.className = "student-card";
 
-    // Find one student by database ID
-    async function findStudent() {
-        const id = document.getElementById("studentId").value.trim();
-        const output = document.getElementById("singleStudent");
+        const top = document.createElement("div");
+        top.className = "student-top";
 
-        if (!id || !Number.isInteger(Number(id)) || Number(id) < 1) {
-            output.textContent = "Enter a database ID from 1 to 5.";
+        const avatar = document.createElement("div");
+        avatar.className = "avatar";
+
+        const initials = String(student.name || "?")
+            .trim()
+            .split(/\s+/)
+            .filter(Boolean)
+            .slice(0, 2)
+            .map(part => part.charAt(0).toUpperCase())
+            .join("");
+
+        avatar.textContent = initials || "?";
+
+        const heading = document.createElement("div");
+
+        const name = document.createElement("div");
+        name.className = "student-name";
+        name.textContent = student.name;
+
+        const number = document.createElement("div");
+        number.className = "student-number";
+        number.textContent = "Student No. " + student.student_id;
+
+        heading.append(name, number);
+        top.append(avatar, heading);
+
+        const details = document.createElement("div");
+        details.className = "details";
+
+        const rows = [
+            ["Database ID", student.id],
+            ["Program", student.program],
+            ["Year Level", student.year],
+            ["Section", student.section]
+        ];
+
+        rows.forEach(([label, value]) => {
+            const row = document.createElement("div");
+            row.className = "detail-row";
+
+            const labelElement = document.createElement("span");
+            labelElement.className = "detail-label";
+            labelElement.textContent = label;
+
+            const valueElement = document.createElement("span");
+            valueElement.className = "detail-value";
+            valueElement.textContent = value;
+
+            if (label === "Section") {
+                const badge = document.createElement("span");
+                badge.className = "badge";
+                badge.textContent = "Section " + value;
+                valueElement.replaceChildren(badge);
+            }
+
+            row.append(labelElement, valueElement);
+            details.appendChild(row);
+        });
+
+        card.append(top, details);
+        return card;
+    }
+
+    function displayStudents(container, students) {
+        container.replaceChildren();
+
+        if (!Array.isArray(students) || students.length === 0) {
+            showMessage(container, "No student records found.");
             return;
         }
 
-        output.textContent = "Searching...";
+        const grid = document.createElement("div");
+        grid.className = "results-grid";
+
+        students.forEach(student => {
+            grid.appendChild(createStudentCard(student));
+        });
+
+        container.appendChild(grid);
+    }
+
+    async function fetchJSON(url) {
+        const response = await fetch(url);
+
+        let data;
 
         try {
-            const response = await fetch(
-                "/students/" + encodeURIComponent(id)
-            );
+            data = await response.json();
+        } catch {
+            throw new Error("The server returned an invalid response.");
+        }
 
-            const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.error || "Request failed.");
+        }
 
-            if (!response.ok) {
-                output.textContent = data.error || "Student not found.";
-                return;
-            }
+        return data;
+    }
 
-            output.textContent =
-                "Database ID: " + data.id +
-                " | Student ID: " + data.student_id +
-                " | Name: " + data.name +
-                " | Program: " + data.program +
-                " | Year: " + data.year +
-                " | Section: " + data.section;
+    async function loadStudents() {
+        const results = document.getElementById("allStudents");
+        const button = document.getElementById("loadButton");
+
+        button.disabled = true;
+        button.textContent = "Loading...";
+
+        try {
+            const students = await fetchJSON("/students");
+
+            displayStudents(results, students);
+
+            document.getElementById("totalCount").textContent =
+                students.length;
+
+            document.getElementById("bsitCount").textContent =
+                students.filter(student =>
+                    String(student.program).toUpperCase() === "BSIT"
+                ).length;
         } catch (error) {
-            output.textContent = "Unable to retrieve student.";
-            console.error(error);
+            showMessage(results, error.message, true);
+        } finally {
+            button.disabled = false;
+            button.textContent = "Load Students";
         }
     }
 
+    document.getElementById("searchForm")
+        .addEventListener("submit", async function(event) {
+            event.preventDefault();
 
-    // Additional task: filter by section
-    async function filterStudents() {
-        const section = document.getElementById("sectionInput").value;
-        const output = document.getElementById("sectionResults");
+            const id = document.getElementById("studentId").value.trim();
+            const result = document.getElementById("studentResult");
 
-        output.textContent = "Loading section records...";
-
-        try {
-            const response = await fetch(
-                "/students/section/" + encodeURIComponent(section)
-            );
-
-            if (!response.ok) {
-                throw new Error("Unable to load section records");
-            }
-
-            const students = await response.json();
-            output.replaceChildren();
-
-            if (students.length === 0) {
-                output.textContent = "No students found in this section.";
+            if (!id || !Number.isInteger(Number(id)) || Number(id) < 1) {
+                showMessage(
+                    result,
+                    "Please enter a valid database ID.",
+                    true
+                );
                 return;
             }
 
-            students.forEach(student => {
-                const card = document.createElement("div");
-                card.className = "student";
+            showMessage(result, "Searching for student...");
 
-                const details = document.createElement("p");
-                details.textContent =
-                    student.student_id + " - " +
-                    student.name + " | " +
-                    student.program + " | Year " +
-                    student.year + " | Section " +
-                    student.section;
+            try {
+                const student = await fetchJSON(
+                    `/students/${encodeURIComponent(id)}`
+                );
 
-                card.appendChild(details);
-                output.appendChild(card);
-            });
-        } catch (error) {
-            output.textContent = "Unable to retrieve section records.";
-            console.error(error);
-        }
-    }
+                displayStudents(result, [student]);
+            } catch (error) {
+                showMessage(result, error.message, true);
+            }
+        });
+
+    document.getElementById("filterForm")
+        .addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const section =
+                document.getElementById("sectionFilter").value;
+
+            const results = document.getElementById("sectionResults");
+
+            showMessage(results, "Filtering student records...");
+
+            try {
+                const students = await fetchJSON(
+                    `/students/section/${encodeURIComponent(section)}`
+                );
+
+                displayStudents(results, students);
+            } catch (error) {
+                showMessage(results, error.message, true);
+            }
+        });
 </script>
 
 </body>
