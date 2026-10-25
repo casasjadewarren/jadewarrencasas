@@ -1,8 +1,7 @@
-import request
+
 import os
 import sqlite3
-PARTNER_URL = "https://hemarpaulabian.onrender.com/students"
-PARTNER_POST_URL = "https://hemarpaulabian.onrender.com/api/students"
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, "students.db")
 
@@ -16,25 +15,36 @@ CREATE TABLE IF NOT EXISTS students (
     name TEXT NOT NULL,
     program TEXT NOT NULL,
     year INTEGER NOT NULL,
-    section TEXT NOT NULL
+    section TEXT NOT NULL,
+    source TEXT DEFAULT 'Manual Entry'
 )
 """)
 
-# Reset the sample records
+# Add source to an existing database if it is missing
+cursor.execute("PRAGMA table_info(students)")
+columns = [column[1] for column in cursor.fetchall()]
+
+if "source" not in columns:
+    cursor.execute("""
+        ALTER TABLE students
+        ADD COLUMN source TEXT DEFAULT 'Manual Entry'
+    """)
+
+# Reset sample records only when this script is run
 cursor.execute("DELETE FROM students")
 
 students = [
-    ("2026-00123", "jade casas", "BSIT", 1, "A"),
-    ("2026-00124", "Mary debaja", "BSIT", 1, "A"),
-    ("2026-00125", "hemar abian", "BSIT", 2, "B"),
-    ("2026-00126", "raveen celo", "BSCS", 2, "A"),
-    ("2026-00127", "lorenzo colasisang", "BSIT", 3, "B")
+    ("2026-00123", "jade casas", "BSIT", 1, "A", "Manual Entry"),
+    ("2026-00124", "Mary debaja", "BSIT", 1, "A", "Manual Entry"),
+    ("2026-00125", "hemar abian", "BSIT", 2, "B", "Partner API"),
+    ("2026-00126", "raveen celo", "BSCS", 2, "A", "Manual Entry"),
+    ("2026-00127", "lorenzo colasisang", "BSIT", 3, "B", "Manual Entry")
 ]
 
 cursor.executemany("""
 INSERT INTO students
-(student_id, name, program, year, section)
-VALUES (?, ?, ?, ?, ?)
+(student_id, name, program, year, section, source)
+VALUES (?, ?, ?, ?, ?, ?)
 """, students)
 
 conn.commit()
