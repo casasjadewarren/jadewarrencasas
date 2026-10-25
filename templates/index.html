@@ -2,1588 +2,1209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#172554">
-    <title>StudentHub | Student Management</title>
-
-    <style>
-        :root {
-            --primary: #3157d5;
-            --primary-dark: #2443ad;
-            --navy: #172554;
-            --background: #f5f7fb;
-            --surface: #ffffff;
-            --text: #172033;
-            --muted: #758096;
-            --border: #e5e9f2;
-            --success: #15803d;
-            --danger: #c2414b;
-            --radius: 14px;
-            --shadow: 0 4px 18px rgba(24, 39, 75, 0.045);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 24px;
-        }
-
-        body {
-            margin: 0;
-            font-family: Inter, -apple-system, BlinkMacSystemFont,
-                         "Segoe UI", Arial, sans-serif;
-            background: var(--background);
-            color: var(--text);
-            font-size: 14px;
-            line-height: 1.55;
-        }
-
-        button, input, select {
-            font: inherit;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        button:focus-visible, input:focus-visible,
-        select:focus-visible, a:focus-visible {
-            outline: 3px solid #93b4ff;
-            outline-offset: 2px;
-        }
-
-        .app-layout {
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-
-        .sidebar {
-            position: fixed;
-            inset: 0 auto 0 0;
-            width: 245px;
-            background: var(--navy);
-            color: #fff;
-            padding: 27px 17px;
-            display: flex;
-            flex-direction: column;
-            z-index: 10;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 10px 30px;
-            border-bottom: 1px solid rgba(255,255,255,.12);
-        }
-
-        .brand-icon {
-            display: grid;
-            place-items: center;
-            width: 43px;
-            height: 43px;
-            border-radius: 12px;
-            background: #4266e8;
-            font-size: 21px;
-            font-weight: 800;
-        }
-
-        .brand-name {
-            font-size: 19px;
-            font-weight: 750;
-            letter-spacing: -.5px;
-        }
-
-        .brand-caption {
-            font-size: 11px;
-            color: #aebbd8;
-        }
-
-        .nav-label {
-            margin: 28px 12px 10px;
-            color: #92a2c7;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.4px;
-            text-transform: uppercase;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            margin-bottom: 5px;
-            border-radius: 9px;
-            color: #cbd5e8;
-            text-decoration: none;
-            transition: background .18s, color .18s;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            background: #2a3d70;
-            color: #fff;
-        }
-
-        .nav-icon {
-            width: 22px;
-            text-align: center;
-            font-size: 17px;
-        }
-
-        .sidebar-footer {
-            margin-top: auto;
-            padding: 16px 10px 0;
-            border-top: 1px solid rgba(255,255,255,.12);
-            color: #aebbd8;
-            font-size: 12px;
-        }
-
-        .status-dot {
-            display: inline-block;
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #4ade80;
-            margin-right: 7px;
-        }
-
-        /* Main area */
-
-        .main {
-            margin-left: 245px;
-            min-height: 100vh;
-        }
-
-        .topbar {
-            min-height: 78px;
-            padding: 17px 35px;
-            background: #fff;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 18px;
-        }
-
-        .breadcrumb {
-            color: var(--muted);
-            font-size: 12px;
-            margin-bottom: 2px;
-        }
-
-        .topbar-title {
-            font-size: 17px;
-            font-weight: 750;
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 38px;
-            height: 38px;
-            display: grid;
-            place-items: center;
-            border-radius: 50%;
-            color: var(--primary);
-            background: #e9efff;
-            font-weight: 800;
-        }
-
-        .user-label {
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        .user-caption {
-            color: var(--muted);
-            font-size: 11px;
-        }
-
-        .content {
-            max-width: 1500px;
-            margin: auto;
-            padding: 30px 35px 45px;
-        }
-
-        .page-heading {
-            display: flex;
-            align-items: flex-start;
-            justify-content: space-between;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .page-heading h1 {
-            font-size: 27px;
-            line-height: 1.25;
-            letter-spacing: -.8px;
-            margin: 0 0 7px;
-        }
-
-        .page-heading p {
-            margin: 0;
-            color: var(--muted);
-        }
-
-        .eyebrow {
-            color: var(--primary);
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: 1.5px;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-        }
-
-        /* Buttons */
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            min-height: 39px;
-            padding: 9px 14px;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            background: var(--primary);
-            color: white;
-            font-weight: 650;
-            text-decoration: none;
-            transition: background .15s, border .15s;
-        }
-
-        .btn:hover {
-            background: var(--primary-dark);
-        }
-
-        .btn-secondary {
-            background: #fff;
-            border-color: var(--border);
-            color: #34405a;
-        }
-
-        .btn-secondary:hover {
-            background: #f5f7fc;
-        }
-
-        .btn-danger {
-            background: #fff1f2;
-            color: var(--danger);
-            border-color: #ffe0e4;
-        }
-
-        .btn-danger:hover {
-            background: #ffe3e6;
-        }
-
-        .btn-small {
-            min-height: 32px;
-            padding: 6px 10px;
-            font-size: 12px;
-        }
-
-        /* Statistics */
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 17px;
-            margin-bottom: 24px;
-        }
-
-        .stat-card {
-            position: relative;
-            overflow: hidden;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 21px;
-            box-shadow: var(--shadow);
-        }
-
-        .stat-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .stat-label {
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .stat-icon {
-            display: grid;
-            place-items: center;
-            width: 39px;
-            height: 39px;
-            border-radius: 11px;
-            background: #edf2ff;
-            color: var(--primary);
-            font-size: 19px;
-        }
-
-        .stat-value {
-            display: block;
-            margin-top: 13px;
-            font-size: 30px;
-            font-weight: 800;
-            line-height: 1.2;
-            letter-spacing: -1px;
-        }
-
-        .stat-note {
-            margin-top: 7px;
-            color: var(--muted);
-            font-size: 11px;
-        }
-
-        /* Panels */
-
-        .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            margin-bottom: 22px;
-            box-shadow: var(--shadow);
-            scroll-margin-top: 20px;
-        }
-
-        .panel-header {
-            padding: 21px 23px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .panel-title {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 750;
-        }
-
-        .panel-subtitle {
-            margin: 4px 0 0;
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .panel-body {
-            padding: 23px;
-        }
-
-        .section-tag {
-            display: inline-block;
-            color: #4259a7;
-            background: #edf2ff;
-            padding: 5px 9px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: .4px;
-            text-transform: uppercase;
-        }
-
-        /* Form */
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 19px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 7px;
-            font-size: 12px;
-            font-weight: 700;
-            color: #38445c;
-        }
-
-        .required {
-            color: var(--danger);
-        }
-
-        .form-control {
-            width: 100%;
-            min-height: 43px;
-            border: 1px solid #dce2ed;
-            border-radius: 8px;
-            padding: 10px 12px;
-            color: var(--text);
-            background: #fff;
-            transition: border .15s, box-shadow .15s;
-        }
-
-        .form-control::placeholder {
-            color: #a0a9ba;
-        }
-
-        .form-control:focus {
-            border-color: #7290f0;
-            outline: none;
-            box-shadow: 0 0 0 3px #3157d51a;
-        }
-
-        .form-hint {
-            margin-top: 5px;
-            color: var(--muted);
-            font-size: 11px;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 9px;
-            flex-wrap: wrap;
-            margin-top: 23px;
-            padding-top: 19px;
-            border-top: 1px solid var(--border);
-        }
-
-        /* Search and records */
-
-        .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 18px;
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            max-width: 420px;
-        }
-
-        .search-box .form-control {
-            padding-left: 38px;
-        }
-
-        .search-icon {
-            position: absolute;
-            top: 10px;
-            left: 12px;
-            color: var(--muted);
-            font-size: 16px;
-        }
-
-        .toolbar-actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .student-list {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 14px;
-        }
-
-        .student-card {
-            border: 1px solid var(--border);
-            border-radius: 11px;
-            padding: 18px;
-            min-width: 0;
-            transition: box-shadow .18s, border-color .18s;
-        }
-
-        .student-card:hover {
-            border-color: #c8d4fa;
-            box-shadow: 0 5px 18px rgba(36, 67, 173, .06);
-        }
-
-        .student-card-top {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .student-avatar {
-            flex-shrink: 0;
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
-            background: #eaf0ff;
-            color: #3157d5;
-            display: grid;
-            place-items: center;
-            font-size: 15px;
-            font-weight: 800;
-        }
-
-        .student-name {
-            font-size: 14px;
-            font-weight: 750;
-            overflow-wrap: anywhere;
-        }
-
-        .student-id {
-            color: var(--muted);
-            font-size: 11px;
-            margin-top: 3px;
-        }
-
-        .detail-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 13px 10px;
-            padding: 14px 0;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .detail-label {
-            display: block;
-            color: var(--muted);
-            font-size: 10px;
-            margin-bottom: 3px;
-        }
-
-        .detail-value {
-            font-size: 12px;
-            font-weight: 700;
-            overflow-wrap: anywhere;
-        }
-
-        .source-badge {
-            display: inline-flex;
-            align-items: center;
-            border-radius: 6px;
-            background: #edf2ff;
-            color: #3552b6;
-            padding: 4px 8px;
-            font-size: 10px;
-            font-weight: 750;
-        }
-
-        .source-badge.partner {
-            background: #e7f8ee;
-            color: #177343;
-        }
-
-        .source-badge.imported {
-            background: #fff3df;
-            color: #9a5b08;
-        }
-
-        .card-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 7px;
-            margin-top: 14px;
-        }
-
-        .card-actions .btn {
-            flex: 1 1 auto;
-        }
-
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 35px 18px;
-            border: 1px dashed #d7deeb;
-            border-radius: 10px;
-            color: var(--muted);
-        }
-
-        .empty-icon {
-            font-size: 27px;
-            margin-bottom: 8px;
-        }
-
-        /* Partner API */
-
-        .api-banner {
-            background: #f1f5ff;
-            border: 1px solid #dce6ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 17px;
-        }
-
-        .api-banner strong {
-            display: block;
-            margin-bottom: 5px;
-            font-size: 12px;
-        }
-
-        .api-banner p {
-            margin: 0;
-            color: #64708a;
-            font-size: 12px;
-        }
-
-        .partner-list {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .partner-card {
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 16px;
-            min-width: 0;
-        }
-
-        .partner-card h3 {
-            font-size: 14px;
-            margin: 0 0 10px;
-            overflow-wrap: anywhere;
-        }
-
-        .partner-card p {
-            margin: 6px 0;
-            font-size: 12px;
-            color: #5e6a80;
-            overflow-wrap: anywhere;
-        }
-
-        .partner-card .btn {
-            width: 100%;
-            margin-top: 12px;
-        }
-
-        /* API information */
-
-        .endpoint-list {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .endpoint-item {
-            border: 1px solid var(--border);
-            border-radius: 9px;
-            padding: 14px;
-            min-width: 0;
-        }
-
-        .endpoint-item strong {
-            display: block;
-            font-size: 12px;
-            margin-bottom: 7px;
-        }
-
-        .endpoint-item code {
-            display: block;
-            color: #3157d5;
-            font-size: 12px;
-            overflow-wrap: anywhere;
-        }
-
-        .message {
-            display: none;
-            margin: 14px 0 0;
-            padding: 11px 13px;
-            border-radius: 8px;
-            font-size: 12px;
-            overflow-wrap: anywhere;
-        }
-
-        .message.show {
-            display: block;
-        }
-
-        .message.error {
-            background: #fff0f0;
-            border: 1px solid #ffdada;
-            color: #a72d36;
-        }
-
-        .message.success {
-            background: #eaf8ef;
-            border: 1px solid #ccebd7;
-            color: #176b39;
-        }
-
-        .muted {
-            color: var(--muted);
-        }
-
-        .footer {
-            text-align: center;
-            padding: 10px 0 0;
-            color: #929bad;
-            font-size: 11px;
-        }
-
-        /* Responsive */
-
-        @media (max-width: 1050px) {
-            .sidebar {
-                width: 205px;
-            }
-
-            .main {
-                margin-left: 205px;
-            }
-
-            .content {
-                padding: 25px 22px 35px;
-            }
-
-            .topbar {
-                padding: 16px 22px;
-            }
-
-            .student-list, .partner-list {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 720px) {
-            .sidebar {
-                position: static;
-                width: 100%;
-                padding: 14px 15px;
-            }
-
-            .brand {
-                padding: 0 4px 13px;
-            }
-
-            .nav-label, .sidebar-footer {
-                display: none;
-            }
-
-            .sidebar nav {
-                display: flex;
-                gap: 6px;
-                overflow-x: auto;
-                padding-top: 12px;
-            }
-
-            .nav-link {
-                flex: 0 0 auto;
-                margin: 0;
-                padding: 9px 11px;
-                font-size: 12px;
-            }
-
-            .nav-icon {
-                font-size: 14px;
-                width: auto;
-            }
-
-            .main {
-                margin-left: 0;
-            }
-
-            .topbar {
-                min-height: 64px;
-                padding: 13px 16px;
-            }
-
-            .content {
-                padding: 22px 14px 30px;
-            }
-
-            .page-heading {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .page-heading h1 {
-                font-size: 24px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .stat-card {
-                padding: 16px;
-            }
-
-            .stat-value {
-                font-size: 26px;
-            }
-
-            .panel-header, .panel-body {
-                padding: 17px;
-            }
-
-            .form-grid, .endpoint-list {
-                grid-template-columns: 1fr;
-            }
-
-            .toolbar {
-                align-items: stretch;
-                flex-direction: column;
-            }
-
-            .search-box {
-                max-width: none;
-            }
-
-            .toolbar-actions {
-                display: grid;
-                grid-template-columns: 1fr;
-            }
-
-            .toolbar-actions .btn {
-                width: 100%;
-            }
-
-            .topbar-right .user-info {
-                display: none;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                scroll-behavior: auto !important;
-                transition: none !important;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudentHub | Student Management</title>
+
+<style>
+:root {
+    --green: #18794e;
+    --green-dark: #12372b;
+    --green-light: #e5f4e9;
+    --bg: #f3f7f3;
+    --white: #ffffff;
+    --text: #20352a;
+    --muted: #78877d;
+    --border: #e0e9e1;
+    --red: #c2414b;
+    --shadow: 0 8px 28px rgba(25, 65, 43, .06);
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Inter, "Segoe UI", Arial, sans-serif;
+    background:
+        radial-gradient(ellipse at top right, #deefe2, transparent 35%),
+        var(--bg);
+    color: var(--text);
+}
+
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .6; cursor: not-allowed; }
+
+.app {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 245px minmax(0, 1fr);
+}
+
+.sidebar {
+    background: linear-gradient(180deg, #12372b, #0d291f);
+    color: white;
+    padding: 26px 17px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 8px;
+}
+
+.brand-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #3c9b69;
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.brand h2 {
+    font-size: 20px;
+    margin: 0;
+    letter-spacing: -.7px;
+}
+
+.brand small {
+    display: block;
+    margin-top: 4px;
+    color: #b4d4bf;
+    font-size: 11px;
+}
+
+.nav-label {
+    padding: 0 11px;
+    color: #91b5a0;
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.nav-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    color: #d3e6d8;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.nav-item.active {
+    background: #2b7953;
+    color: white;
+    box-shadow: inset 3px 0 #a9e6bc;
+}
+
+.nav-item:hover { background: #ffffff12; }
+
+.sidebar-bottom {
+    margin-top: auto;
+    border: 1px solid #ffffff20;
+    background: #ffffff08;
+    padding: 14px;
+    border-radius: 12px;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background: #6ee7a0;
+    border-radius: 50%;
+    margin-right: 7px;
+}
+
+.sidebar-bottom p {
+    font-size: 12px;
+    color: #c0d9c8;
+    margin: 8px 0 0;
+    line-height: 1.6;
+}
+
+main { min-width: 0; }
+
+.topbar {
+    height: 76px;
+    padding: 0 34px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffffdf;
+    border-bottom: 1px solid var(--border);
+}
+
+.breadcrumb {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.breadcrumb strong { color: var(--green); }
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: var(--green-light);
+    color: var(--green);
+    font-weight: bold;
+}
+
+.profile strong { display: block; font-size: 12px; }
+.profile small { display: block; margin-top: 4px; color: var(--muted); }
+
+.content {
+    max-width: 1500px;
+    margin: auto;
+    padding: 30px 34px 40px;
+}
+
+.heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-bottom: 25px;
+}
+
+.eyebrow {
+    font-size: 10px;
+    color: var(--green);
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 9px;
+}
+
+h1 {
+    margin: 0;
+    font-size: clamp(25px, 3vw, 34px);
+    letter-spacing: -1.2px;
+    color: var(--green-dark);
+}
+
+.subtitle {
+    margin: 9px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.btn {
+    border: 1px solid transparent;
+    background: var(--green);
+    color: white;
+    border-radius: 9px;
+    padding: 11px 15px;
+    font-weight: 600;
+    font-size: 12px;
+    transition: .2s;
+}
+
+.btn:hover {
+    background: #12633e;
+    transform: translateY(-1px);
+}
+
+.btn-light {
+    background: white;
+    color: var(--green);
+    border-color: var(--border);
+}
+
+.btn-light:hover {
+    background: var(--green-light);
+    color: var(--green-dark);
+}
+
+.btn-danger {
+    color: var(--red);
+    background: #fff0f0;
+    border-color: #f5dada;
+}
+
+.btn-danger:hover {
+    background: #ffe0e0;
+    color: #982b35;
+}
+
+.btn-small {
+    padding: 8px 10px;
+    font-size: 11px;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    margin-bottom: 23px;
+}
+
+.stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.stat-label {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.stat-icon {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 11px;
+    background: var(--green-light);
+    color: var(--green);
+    font-size: 18px;
+}
+
+.stat-value {
+    font-size: 30px;
+    font-weight: 750;
+    color: var(--green-dark);
+    margin-top: 13px;
+}
+
+.stat-foot {
+    color: var(--muted);
+    font-size: 11px;
+    margin-top: 7px;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(280px, .85fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.panel {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 19px 21px;
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-header h2 {
+    font-size: 15px;
+    margin: 0;
+    color: var(--green-dark);
+}
+
+.panel-header p {
+    margin: 6px 0 0;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.5;
+}
+
+.panel-body { padding: 21px; }
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.field.full { grid-column: 1 / -1; }
+
+label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #405447;
+    margin-bottom: 7px;
+}
+
+input, select {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 12px;
+    border: 1px solid #dce6dd;
+    border-radius: 9px;
+    background: #fff;
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+}
+
+input:focus, select:focus {
+    border-color: #48a575;
+    box-shadow: 0 0 0 3px #18794e15;
+}
+
+.form-actions {
+    display: flex;
+    gap: 9px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+.message {
+    display: none;
+    margin-top: 14px;
+    padding: 11px 13px;
+    border-radius: 9px;
+    font-size: 12px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.message.show { display: block; }
+.message.success { background: #e7f7ec; color: #17663b; }
+.message.error { background: #fff0f0; color: #a52c35; }
+
+.toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 145px;
+    gap: 9px;
+    padding: 17px 21px;
+    border-bottom: 1px solid var(--border);
+}
+
+.student-list {
+    padding: 17px;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.student-card {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 15px;
+    background: linear-gradient(145deg, white, #f9fcf9);
+    transition: .2s;
+}
+
+.student-card:hover {
+    border-color: #a7d3b5;
+    box-shadow: 0 6px 18px #12372b0a;
+}
+
+.student-head {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 14px;
+    min-width: 0;
+}
+
+.student-avatar {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background: #e4f4e8;
+    color: #176640;
+    font-weight: bold;
+}
+
+.student-head h3 {
+    margin: 0;
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.student-head small {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+    margin-top: 5px;
+    overflow-wrap: anywhere;
+}
+
+.details {
+    border-top: 1px solid #e9efea;
+    padding-top: 10px;
+}
+
+.detail {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 8px 0;
+    font-size: 11px;
+}
+
+.detail span:first-child { color: var(--muted); }
+.detail span:last-child {
+    font-weight: 600;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.source {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 7px;
+    background: #e5f4e9;
+    color: #176640;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.source.partner {
+    background: #ddf5e6;
+    color: #14683d;
+}
+
+.source.imported {
+    background: #fff3dc;
+    color: #8c5a13;
+}
+
+.card-actions {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+
+.card-actions .btn { flex: 1; }
+
+.partner-banner {
+    margin: 17px;
+    padding: 15px;
+    background: linear-gradient(115deg, #e8f6eb, #f7fbf7);
+    border: 1px solid #d5e9d9;
+    border-radius: 11px;
+}
+
+.partner-banner strong {
+    font-size: 12px;
+    color: #20563a;
+}
+
+.partner-banner p {
+    font-size: 11px;
+    color: #64796a;
+    line-height: 1.6;
+    margin: 7px 0 0;
+    overflow-wrap: anywhere;
+}
+
+.partner-list { padding: 0 17px 17px; }
+
+.partner-record {
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    padding: 13px;
+    margin-bottom: 10px;
+}
+
+.partner-record h3 {
+    font-size: 13px;
+    color: var(--green-dark);
+    margin: 0 0 9px;
+    overflow-wrap: anywhere;
+}
+
+.partner-record p {
+    font-size: 11px;
+    color: var(--muted);
+    margin: 7px 0;
+    overflow-wrap: anywhere;
+}
+
+.endpoint {
+    padding: 13px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.endpoint:last-child { border-bottom: 0; }
+
+.endpoint strong {
+    display: block;
+    font-size: 11px;
+    margin-bottom: 7px;
+}
+
+.endpoint code {
+    font-size: 11px;
+    color: var(--green);
+    overflow-wrap: anywhere;
+}
+
+.empty {
+    grid-column: 1 / -1;
+    padding: 32px 15px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.footer {
+    text-align: center;
+    padding: 12px;
+    color: #89988c;
+    font-size: 10px;
+}
+
+@media (max-width: 1050px) {
+    .app { grid-template-columns: 200px minmax(0, 1fr); }
+    .content { padding: 25px 20px; }
+    .topbar { padding: 0 20px; }
+    .layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 700px) {
+    .app { display: block; }
+    .sidebar { padding: 15px; gap: 17px; }
+    .sidebar nav { display: flex; flex-wrap: wrap; gap: 5px; }
+    .nav-label { width: 100%; }
+    .nav-item { margin: 0; padding: 9px 10px; }
+    .sidebar-bottom { display: none; }
+    .topbar { height: 60px; padding: 0 15px; }
+    .content { padding: 20px 12px; }
+    .stats { gap: 8px; }
+    .stat-card { padding: 13px; }
+    .stat-value { font-size: 24px; }
+    .stat-label { font-size: 10px; }
+    .stat-icon { width: 30px; height: 30px; }
+    .student-list { grid-template-columns: 1fr; }
+    .form-grid { grid-template-columns: 1fr; }
+    .field.full { grid-column: auto; }
+    .toolbar { grid-template-columns: 1fr; padding: 13px; }
+    .panel-header, .panel-body { padding: 15px; }
+}
+
+@media (max-width: 390px) {
+    .stats { grid-template-columns: 1fr; }
+    .heading .btn { width: 100%; }
+}
+</style>
 </head>
 
 <body>
-<div class="app-layout">
+<div class="app">
 
     <aside class="sidebar">
         <div class="brand">
             <div class="brand-icon">S</div>
             <div>
-                <div class="brand-name">StudentHub</div>
-                <div class="brand-caption">Management System</div>
+                <h2>StudentHub</h2>
+                <small>STUDENT MANAGEMENT</small>
             </div>
         </div>
 
-        <div class="nav-label">Workspace</div>
-
         <nav>
-            <a href="#dashboard" class="nav-link active">
-                <span class="nav-icon">▦</span> Dashboard
-            </a>
-            <a href="#studentFormPanel" class="nav-link">
-                <span class="nav-icon">＋</span> Add Student
-            </a>
-            <a href="#recordsPanel" class="nav-link">
-                <span class="nav-icon">▤</span> Student Records
-            </a>
-            <a href="#partnerPanel" class="nav-link">
-                <span class="nav-icon">⇄</span> Partner API
-            </a>
-            <a href="#endpointsPanel" class="nav-link">
-                <span class="nav-icon">⌘</span> API Endpoints
-            </a>
+            <div class="nav-label">WORKSPACE</div>
+            <a class="nav-item active" href="#dashboard">▦ Dashboard</a>
+            <a class="nav-item" href="#studentForm">＋ Student Form</a>
+            <a class="nav-item" href="#localRecords">♙ Student Records</a>
+            <a class="nav-item" href="#partnerSection">⇄ Partner API</a>
+            <a class="nav-item" href="#apiSection">⌘ API Endpoints</a>
         </nav>
 
-        <div class="sidebar-footer">
-            <div><span class="status-dot"></span>Local dashboard</div>
-            <div style="margin-top:7px">StudentHub · Flask + SQLite</div>
+        <div class="sidebar-bottom">
+            <span class="status-dot"></span>
+            <strong style="font-size:12px">StudentHub System</strong>
+            <p>Manage local student information and exchange records with your partner API.</p>
         </div>
     </aside>
 
-    <main class="main">
+    <main>
         <div class="topbar">
-            <div>
-                <div class="breadcrumb">Workspace / Student Management</div>
-                <div class="topbar-title">Student Administration</div>
-            </div>
-
-            <div class="topbar-right">
-                <div class="user-info">
-                    <div class="user-label">Administrator</div>
-                    <div class="user-caption">Student records</div>
+            <div class="breadcrumb">Workspace / <strong>Dashboard</strong></div>
+            <div class="profile">
+                <div class="avatar">SH</div>
+                <div>
+                    <strong>StudentHub Admin</strong>
+                    <small>Student Records</small>
                 </div>
-                <div class="avatar">AD</div>
             </div>
         </div>
 
         <div class="content" id="dashboard">
-
-            <div class="page-heading">
+            <div class="heading">
                 <div>
-                    <div class="eyebrow">Overview</div>
+                    <div class="eyebrow">STUDENT INFORMATION SYSTEM</div>
                     <h1>Student Dashboard</h1>
-                    <p>Manage student information and synchronize partner records.</p>
+                    <p class="subtitle">Manage student records and synchronize data with your partner.</p>
                 </div>
-
-                <button class="btn" type="button"
-                        onclick="goToAddStudent()">＋ Add New Student</button>
+                <button class="btn" onclick="startNewStudent()">＋ Add Student</button>
             </div>
 
-            <section class="stats-grid">
+            <div class="stats">
                 <div class="stat-card">
                     <div class="stat-top">
                         <span class="stat-label">Total Students</span>
-                        <span class="stat-icon">♙</span>
+                        <div class="stat-icon">♙</div>
                     </div>
-                    <strong class="stat-value" id="totalCount">0</strong>
-                    <div class="stat-note">Records in your local database</div>
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-foot">Records in your database</div>
                 </div>
 
                 <div class="stat-card">
                     <div class="stat-top">
                         <span class="stat-label">BSIT Students</span>
-                        <span class="stat-icon">▤</span>
+                        <div class="stat-icon">⌘</div>
                     </div>
-                    <strong class="stat-value" id="bsitCount">0</strong>
-                    <div class="stat-note">Students enrolled in BSIT</div>
+                    <div class="stat-value" id="bsitCount">0</div>
+                    <div class="stat-foot">Information Technology program</div>
                 </div>
 
                 <div class="stat-card">
                     <div class="stat-top">
                         <span class="stat-label">Partner Records</span>
-                        <span class="stat-icon">⇄</span>
+                        <div class="stat-icon">⇄</div>
                     </div>
-                    <strong class="stat-value" id="partnerCount">0</strong>
-                    <div class="stat-note">Records returned by the partner API</div>
+                    <div class="stat-value" id="partnerCount">0</div>
+                    <div class="stat-foot">Records loaded from partner API</div>
                 </div>
-            </section>
+            </div>
 
-            <section class="panel" id="studentFormPanel">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title" id="formTitle">Add Student</h2>
-                        <p class="panel-subtitle">Enter the student's details below.</p>
-                    </div>
-                    <span class="section-tag" id="formModeTag">New Record</span>
-                </div>
-
-                <div class="panel-body">
-                    <form id="studentForm">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="student_id">Student ID <span class="required">*</span></label>
-                                <input class="form-control" id="student_id"
-                                       required placeholder="e.g. 2026-00128">
+            <div class="layout">
+                <div class="left-column">
+                    <section class="panel" id="studentForm">
+                        <div class="panel-header">
+                            <div>
+                                <h2 id="formTitle">Add New Student</h2>
+                                <p>Enter the student's information below.</p>
                             </div>
-
-                            <div class="form-group">
-                                <label for="name">Full Name <span class="required">*</span></label>
-                                <input class="form-control" id="name"
-                                       required placeholder="Enter full name">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="program">Academic Program <span class="required">*</span></label>
-                                <select class="form-control" id="program" required>
-                                    <option value="">Select program</option>
-                                    <option value="BSIT">BSIT — Information Technology</option>
-                                    <option value="BSCS">BSCS — Computer Science</option>
-                                    <option value="BSIS">BSIS — Information Systems</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="year">Year Level <span class="required">*</span></label>
-                                <select class="form-control" id="year" required>
-                                    <option value="">Select year level</option>
-                                    <option value="1">1st Year</option>
-                                    <option value="2">2nd Year</option>
-                                    <option value="3">3rd Year</option>
-                                    <option value="4">4th Year</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="section">Section <span class="required">*</span></label>
-                                <input class="form-control" id="section"
-                                       required placeholder="e.g. BSIT 3B">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="source">Data Source <span class="required">*</span></label>
-                                <select class="form-control" id="source" required>
-                                    <option value="Manual Entry">Manual Entry</option>
-                                    <option value="Partner API">Partner API</option>
-                                    <option value="Imported Record">Imported Record</option>
-                                </select>
-                                <div class="form-hint">Identifies where the record originated.</div>
-                            </div>
+                            <span class="source">LOCAL DATABASE</span>
                         </div>
 
-                        <div class="form-actions">
-                            <button type="submit" class="btn" id="saveButton">
-                                Save Student
-                            </button>
-                            <button type="button" class="btn btn-secondary"
-                                    id="cancelEditButton" style="display:none"
-                                    onclick="resetForm()">Cancel</button>
-                            <button type="reset" class="btn btn-secondary"
-                                    id="clearButton">Clear Form</button>
+                        <div class="panel-body">
+                            <form id="studentFormElement">
+                                <div class="form-grid">
+                                    <div class="field">
+                                        <label for="student_id">Student ID</label>
+                                        <input id="student_id" required placeholder="2026-00128">
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="name">Full Name</label>
+                                        <input id="name" required placeholder="Enter full name">
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="program">Program</label>
+                                        <select id="program" required>
+                                            <option value="">Select program</option>
+                                            <option value="BSIT">BSIT</option>
+                                            <option value="BSCS">BSCS</option>
+                                            <option value="BSIS">BSIS</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="year">Year Level</label>
+                                        <select id="year" required>
+                                            <option value="">Select year</option>
+                                            <option value="1">1st Year</option>
+                                            <option value="2">2nd Year</option>
+                                            <option value="3">3rd Year</option>
+                                            <option value="4">4th Year</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="section">Section</label>
+                                        <input id="section" required placeholder="e.g. BSIT 3B">
+                                    </div>
+
+                                    <div class="field">
+                                        <label for="source">Data Source</label>
+                                        <select id="source" required>
+                                            <option value="Manual Entry">Manual Entry</option>
+                                            <option value="Partner API">Partner API</option>
+                                            <option value="Imported Record">Imported Record</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button class="btn" id="saveButton" type="submit">Save Student</button>
+                                    <button class="btn btn-light" id="cancelButton" type="button"
+                                        onclick="resetForm()" style="display:none">Cancel Edit</button>
+                                </div>
+                            </form>
+                            <div id="formMessage" class="message"></div>
                         </div>
-                    </form>
+                    </section>
 
-                    <div id="formMessage" class="message" role="status"></div>
-                </div>
-            </section>
-
-            <section class="panel" id="recordsPanel">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">Student Records</h2>
-                        <p class="panel-subtitle">View, search, edit, or manage local student data.</p>
-                    </div>
-                    <span class="section-tag">Local Database</span>
-                </div>
-
-                <div class="panel-body">
-                    <div class="toolbar">
-                        <div class="search-box">
-                            <span class="search-icon">⌕</span>
-                            <input class="form-control" id="searchInput"
-                                   placeholder="Search by student name or ID">
+                    <section class="panel" id="localRecords">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Student Records</h2>
+                                <p>Search, edit, delete, and send local records.</p>
+                            </div>
+                            <button class="btn btn-light btn-small" onclick="loadStudents()">↻ Refresh</button>
                         </div>
 
-                        <div class="toolbar-actions">
-                            <select class="form-control" id="sectionFilter"
-                                    aria-label="Filter by section">
+                        <div class="toolbar">
+                            <input id="searchInput" placeholder="Search name or student ID">
+                            <select id="sectionFilter">
                                 <option value="">All Sections</option>
                             </select>
-
-                            <button class="btn btn-secondary" type="button"
-                                    onclick="loadStudents()">↻ Refresh</button>
                         </div>
-                    </div>
 
-                    <div id="listMessage" class="message" role="status"></div>
-                    <div id="studentList" class="student-list">
-                        <div class="empty-state">Loading student records...</div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="panel" id="partnerPanel">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">Partner API Integration</h2>
-                        <p class="panel-subtitle">Retrieve records from your partner and import them locally.</p>
-                    </div>
-                    <span class="section-tag">External API</span>
+                        <div id="listMessage" class="message" style="margin:0 17px"></div>
+                        <div class="student-list" id="studentList">
+                            <div class="empty">Loading student records...</div>
+                        </div>
+                    </section>
                 </div>
 
-                <div class="panel-body">
-                    <div class="api-banner">
-                        <strong>Partner connection</strong>
-                        <p>GET records from the configured partner endpoint. Select Import to save a record to your local database.</p>
-                    </div>
-
-                    <div class="toolbar-actions" style="margin-bottom:18px">
-                        <button class="btn" type="button"
-                                onclick="loadPartnerRecords()">⇄ Load Partner Records</button>
-                    </div>
-
-                    <div id="partnerMessage" class="message" role="status"></div>
-
-                    <div id="partnerList" class="partner-list">
-                        <div class="empty-state">
-                            <div class="empty-icon">⇄</div>
-                            <strong>No partner records loaded</strong>
-                            <div style="margin-top:5px">Use the button above to connect to the partner API.</div>
+                <div class="right-column">
+                    <section class="panel" id="partnerSection">
+                        <div class="panel-header">
+                            <div>
+                                <h2>Partner Integration</h2>
+                                <p>Exchange records with your partner's API.</p>
+                            </div>
+                            <span class="source partner">API</span>
                         </div>
-                    </div>
+
+                        <div class="partner-banner">
+                            <strong>↔ Partner Connection</strong>
+                            <p>Load the partner's records and import them into your local database. You can also send your records to the partner.</p>
+                        </div>
+
+                        <div style="padding:0 17px 16px">
+                            <button class="btn" style="width:100%" onclick="loadPartnerRecords()">
+                                Load Partner Records
+                            </button>
+                            <div id="partnerMessage" class="message"></div>
+                        </div>
+
+                        <div class="partner-list" id="partnerList">
+                            <div class="empty">Click "Load Partner Records" to retrieve records.</div>
+                        </div>
+                    </section>
+
+                    <section class="panel" id="apiSection">
+                        <div class="panel-header">
+                            <div>
+                                <h2>API Endpoints</h2>
+                                <p>Available application routes.</p>
+                            </div>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="endpoint">
+                                <strong>Local Student Records</strong>
+                                <code>GET /students</code>
+                            </div>
+                            <div class="endpoint">
+                                <strong>Student API</strong>
+                                <code>GET /api/students</code>
+                            </div>
+                            <div class="endpoint">
+                                <strong>Partner Records</strong>
+                                <code>GET /partner-records</code>
+                            </div>
+                            <div class="endpoint">
+                                <strong>Import Student</strong>
+                                <code>POST /import-student</code>
+                            </div>
+                            <div class="endpoint">
+                                <strong>Send to Partner</strong>
+                                <code>POST /send-to-partner</code>
+                            </div>
+                        </div>
+                    </section>
                 </div>
-            </section>
+            </div>
 
-            <section class="panel" id="endpointsPanel">
-                <div class="panel-header">
-                    <div>
-                        <h2 class="panel-title">API Endpoints</h2>
-                        <p class="panel-subtitle">Available routes for student data and partner integration.</p>
-                    </div>
-                    <span class="section-tag">Developer Tools</span>
-                </div>
-
-                <div class="panel-body">
-                    <div class="endpoint-list">
-                        <div class="endpoint-item">
-                            <strong>Get Local Students</strong>
-                            <code>GET /students</code>
-                        </div>
-                        <div class="endpoint-item">
-                            <strong>Student API</strong>
-                            <code>GET /api/students</code>
-                            <code>POST /api/students</code>
-                        </div>
-                        <div class="endpoint-item">
-                            <strong>Partner Records</strong>
-                            <code>GET /partner-records</code>
-                        </div>
-                        <div class="endpoint-item">
-                            <strong>Import Partner Student</strong>
-                            <code>POST /import-student</code>
-                        </div>
-                        <div class="endpoint-item">
-                            <strong>Send Student to Partner</strong>
-                            <code>POST /send-to-partner</code>
-                        </div>
-                        <div class="endpoint-item">
-                            <strong>Update or Delete Student</strong>
-                            <code>/api/students/&lt;id&gt;</code>
-                        </div>
-                    </div>
-
-                    <div style="margin-top:20px">
-                        <div class="muted" style="font-size:12px;margin-bottom:8px">
-                            Configured partner endpoints
-                        </div>
-                        <div class="endpoint-item" style="margin-bottom:9px">
-                            <strong>GET — Retrieve partner records</strong>
-                            <code>https://hemarpaulabian.onrender.com/students</code>
-                        </div>
-                        <div class="endpoint-item">
-                            <strong>POST — Send a student record</strong>
-                            <code>https://hemarpaulabian.onrender.com/api/students</code>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <footer class="footer">
-                StudentHub · Student Information Management System
-            </footer>
+            <div class="footer">StudentHub · Student Information and Partner API Management</div>
         </div>
     </main>
 </div>
 
 <script>
-    let students = [];
-    let partnerRecords = [];
-    let editingId = null;
+let students = [];
+let partnerRecords = [];
+let editingId = null;
 
-    const form = document.getElementById("studentForm");
+const form = document.getElementById("studentFormElement");
 
-    function escapeHTML(value) {
-        return String(value ?? "").replace(/[&<>"']/g, char => ({
-            "&": "&amp;",
-            "<": "&lt;",
-            ">": "&gt;",
-            '"': "&quot;",
-            "'": "&#039;"
-        })[char]);
-    }
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+    })[char]);
+}
 
-    function showMessage(elementId, message, type = "success") {
-        const element = document.getElementById(elementId);
-        element.textContent = message;
-        element.className = "message show " + type;
-    }
+function showMessage(id, message, type = "success") {
+    const element = document.getElementById(id);
+    element.textContent = message;
+    element.className = "message show " + type;
+}
 
-    function clearMessage(elementId) {
-        const element = document.getElementById(elementId);
-        element.textContent = "";
-        element.className = "message";
-    }
+function clearMessage(id) {
+    const element = document.getElementById(id);
+    element.textContent = "";
+    element.className = "message";
+}
 
-    async function apiRequest(url, options = {}) {
-        const response = await fetch(url, {
-            ...options,
-            headers: {
-                "Content-Type": "application/json",
-                ...(options.headers || {})
-            }
-        });
-
-        const data = await response.json().catch(() => ({}));
-
-        if (!response.ok) {
-            throw new Error(data.error || data.message || "Request failed.");
-        }
-
-        return data;
-    }
-
-    function goToAddStudent() {
-        resetForm();
-        document.getElementById("studentFormPanel").scrollIntoView({
-            behavior: "smooth"
-        });
-        document.getElementById("student_id").focus({ preventScroll: true });
-    }
-
-    function resetForm() {
-        editingId = null;
-        form.reset();
-
-        document.getElementById("source").value = "Manual Entry";
-        document.getElementById("formTitle").textContent = "Add Student";
-        document.getElementById("formModeTag").textContent = "New Record";
-        document.getElementById("saveButton").textContent = "Save Student";
-        document.getElementById("cancelEditButton").style.display = "none";
-
-        clearMessage("formMessage");
-    }
-
-    document.getElementById("clearButton").addEventListener("click", () => {
-        resetForm();
-    });
-
-    form.addEventListener("submit", async event => {
-        event.preventDefault();
-        clearMessage("formMessage");
-
-        const student = {
-            student_id: document.getElementById("student_id").value.trim(),
-            name: document.getElementById("name").value.trim(),
-            program: document.getElementById("program").value,
-            year: Number(document.getElementById("year").value),
-            section: document.getElementById("section").value.trim(),
-            source: document.getElementById("source").value
-        };
-
-        const saveButton = document.getElementById("saveButton");
-        saveButton.disabled = true;
-        saveButton.textContent = "Saving...";
-
-        try {
-            if (editingId !== null) {
-                await apiRequest(`/api/students/${editingId}`, {
-                    method: "PUT",
-                    body: JSON.stringify(student)
-                });
-
-                showMessage("formMessage", "Student record updated successfully.");
-            } else {
-                await apiRequest("/api/students", {
-                    method: "POST",
-                    body: JSON.stringify(student)
-                });
-
-                showMessage("formMessage", "Student record saved successfully.");
-            }
-
-            resetForm();
-            await loadStudents();
-        } catch (error) {
-            showMessage("formMessage", error.message, "error");
-        } finally {
-            saveButton.disabled = false;
-            saveButton.textContent = editingId !== null
-                ? "Update Student" : "Save Student";
+async function apiRequest(url, options = {}) {
+    const response = await fetch(url, {
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...(options.headers || {})
         }
     });
 
-    async function loadStudents() {
-        try {
-            students = await apiRequest("/students");
+    const data = await response.json().catch(() => ({}));
 
-            renderStudents();
-            updateStats();
-            updateSectionFilter();
-            clearMessage("listMessage");
-        } catch (error) {
-            showMessage("listMessage", error.message, "error");
-            document.getElementById("studentList").innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">!</div>
-                    <strong>Unable to load student records</strong>
-                    <div style="margin-top:5px">Check that the Flask server is running.</div>
-                </div>`;
-        }
+    if (!response.ok) {
+        throw new Error(data.error || data.message || `Request failed (${response.status}).`);
     }
 
-    function renderStudents() {
-        const query = document.getElementById("searchInput").value
-            .trim().toLowerCase();
-        const section = document.getElementById("sectionFilter").value;
+    return data;
+}
 
-        const filtered = students.filter(student => {
-            const name = String(student.name || "").toLowerCase();
-            const id = String(student.student_id || "").toLowerCase();
+function startNewStudent() {
+    resetForm();
+    document.getElementById("studentForm").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+    document.getElementById("student_id").focus();
+}
 
-            return (name.includes(query) || id.includes(query)) &&
-                   (!section || student.section === section);
-        });
+function resetForm() {
+    editingId = null;
+    form.reset();
+    document.getElementById("source").value = "Manual Entry";
+    document.getElementById("formTitle").textContent = "Add New Student";
+    document.getElementById("saveButton").textContent = "Save Student";
+    document.getElementById("cancelButton").style.display = "none";
+    clearMessage("formMessage");
+}
 
-        const container = document.getElementById("studentList");
+form.addEventListener("submit", async event => {
+    event.preventDefault();
+    clearMessage("formMessage");
 
-        if (filtered.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">⌕</div>
-                    <strong>No student records found</strong>
-                    <div style="margin-top:5px">Try another search or add a new student.</div>
-                </div>`;
-            return;
-        }
+    const student = {
+        student_id: document.getElementById("student_id").value.trim(),
+        name: document.getElementById("name").value.trim(),
+        program: document.getElementById("program").value,
+        year: Number(document.getElementById("year").value),
+        section: document.getElementById("section").value.trim(),
+        source: document.getElementById("source").value
+    };
 
-        container.innerHTML = filtered.map(student => {
-            const source = student.source || "Manual Entry";
-            let sourceClass = "";
-
-            if (source === "Partner API") sourceClass = "partner";
-            if (source === "Imported Record") sourceClass = "imported";
-
-            const initials = String(student.name || "S")
-                .trim().split(/\s+/).slice(0, 2)
-                .map(part => part.charAt(0)).join("").toUpperCase();
-
-            return `
-                <article class="student-card">
-                    <div class="student-card-top">
-                        <div class="student-avatar">${escapeHTML(initials)}</div>
-                        <div>
-                            <div class="student-name">${escapeHTML(student.name)}</div>
-                            <div class="student-id">ID: ${escapeHTML(student.student_id)}</div>
-                        </div>
-                    </div>
-
-                    <div class="detail-grid">
-                        <div>
-                            <span class="detail-label">Program</span>
-                            <span class="detail-value">${escapeHTML(student.program)}</span>
-                        </div>
-                        <div>
-                            <span class="detail-label">Year Level</span>
-                            <span class="detail-value">${escapeHTML(student.year)}</span>
-                        </div>
-                        <div>
-                            <span class="detail-label">Section</span>
-                            <span class="detail-value">${escapeHTML(student.section)}</span>
-                        </div>
-                        <div>
-                            <span class="detail-label">Data Source</span>
-                            <span class="source-badge ${sourceClass}">
-                                ${escapeHTML(source)}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="card-actions">
-                        <button type="button" class="btn btn-secondary btn-small"
-                            onclick="editStudent(${Number(student.id)})">Edit</button>
-                        <button type="button" class="btn btn-secondary btn-small"
-                            onclick="sendToPartner(${Number(student.id)})">Send to Partner</button>
-                        <button type="button" class="btn btn-danger btn-small"
-                            onclick="deleteStudent(${Number(student.id)})">Delete</button>
-                    </div>
-                </article>`;
-        }).join("");
-    }
-
-    function updateStats() {
-        document.getElementById("totalCount").textContent = students.length;
-
-        document.getElementById("bsitCount").textContent =
-            students.filter(student =>
-                String(student.program || "").toUpperCase() === "BSIT"
-            ).length;
-    }
-
-    function updateSectionFilter() {
-        const select = document.getElementById("sectionFilter");
-        const currentValue = select.value;
-        const sections = [...new Set(
-            students.map(student => student.section).filter(Boolean)
-        )].sort();
-
-        select.innerHTML = '<option value="">All Sections</option>';
-
-        sections.forEach(section => {
-            const option = document.createElement("option");
-            option.value = section;
-            option.textContent = section;
-            select.appendChild(option);
-        });
-
-        if (sections.includes(currentValue)) {
-            select.value = currentValue;
-        }
-    }
-
-    function editStudent(id) {
-        const student = students.find(item => Number(item.id) === Number(id));
-        if (!student) return;
-
-        editingId = Number(id);
-
-        document.getElementById("student_id").value = student.student_id || "";
-        document.getElementById("name").value = student.name || "";
-        document.getElementById("program").value = student.program || "";
-        document.getElementById("year").value = String(student.year || "");
-        document.getElementById("section").value = student.section || "";
-        document.getElementById("source").value = student.source || "Manual Entry";
-
-        document.getElementById("formTitle").textContent = "Edit Student";
-        document.getElementById("formModeTag").textContent = "Editing Record";
-        document.getElementById("saveButton").textContent = "Update Student";
-        document.getElementById("cancelEditButton").style.display = "inline-flex";
-
-        clearMessage("formMessage");
-
-        document.getElementById("studentFormPanel").scrollIntoView({
-            behavior: "smooth"
-        });
-    }
-
-    async function deleteStudent(id) {
-        const student = students.find(item => Number(item.id) === Number(id));
-        if (!student) return;
-
-        if (!confirm(`Delete the record for ${student.name}? This cannot be undone.`)) {
-            return;
-        }
-
-        try {
-            await apiRequest(`/api/students/${id}`, { method: "DELETE" });
-            showMessage("listMessage", "Student record deleted successfully.");
-            await loadStudents();
-        } catch (error) {
-            showMessage("listMessage", error.message, "error");
-        }
-    }
-
-    async function loadPartnerRecords() {
-        const container = document.getElementById("partnerList");
-
-        clearMessage("partnerMessage");
-
-        container.innerHTML = `
-            <div class="empty-state">
-                <div class="empty-icon">↻</div>
-                <strong>Connecting to partner API...</strong>
-                <div style="margin-top:5px">Please wait while records are retrieved.</div>
-            </div>`;
-
-        try {
-            const data = await apiRequest("/partner-records");
-
-            partnerRecords = Array.isArray(data)
-                ? data
-                : (Array.isArray(data.students) ? data.students : []);
-
-            document.getElementById("partnerCount").textContent =
-                partnerRecords.length;
-
-            if (partnerRecords.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <strong>No partner records returned</strong>
-                        <div style="margin-top:5px">The API responded, but there were no records to display.</div>
-                    </div>`;
-                return;
-            }
-
-            container.innerHTML = partnerRecords.map((student, index) => {
-                const sid = student.student_id ?? student.id ?? "";
-                const name = student.name ?? student.student_name ?? "Unknown";
-                const program = student.program ?? student.course ?? "";
-                const year = student.year ?? student.year_level ?? "";
-                const section = student.section ?? "";
-
-                return `
-                    <article class="partner-card">
-                        <h3>${escapeHTML(name)}</h3>
-                        <p><strong>Student ID:</strong> ${escapeHTML(sid)}</p>
-                        <p><strong>Program:</strong> ${escapeHTML(program)}</p>
-                        <p><strong>Year:</strong> ${escapeHTML(year)}</p>
-                        <p><strong>Section:</strong> ${escapeHTML(section)}</p>
-                        <p><span class="source-badge partner">Partner API</span></p>
-                        <button type="button" class="btn btn-secondary"
-                            onclick="importPartnerStudent(${index})">
-                            Import Student
-                        </button>
-                    </article>`;
-            }).join("");
-
-        } catch (error) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-icon">!</div>
-                    <strong>Partner connection failed</strong>
-                    <div style="margin-top:5px">${escapeHTML(error.message)}</div>
-                </div>`;
-
-            showMessage("partnerMessage", error.message, "error");
-        }
-    }
-
-    async function importPartnerStudent(index) {
-        const record = partnerRecords[index];
-        if (!record) return;
-
-        const student = {
-            student_id: record.student_id ?? record.id,
-            name: record.name ?? record.student_name,
-            program: record.program ?? record.course,
-            year: record.year ?? record.year_level,
-            section: record.section,
-            source: "Partner API"
-        };
-
-        if (!student.student_id || !student.name || !student.program ||
-            !student.year || !student.section) {
-            showMessage(
-                "partnerMessage",
-                "This partner record is missing one or more required fields.",
-                "error"
-            );
-            return;
-        }
-
-        try {
-            await apiRequest("/import-student", {
+    try {
+        if (editingId !== null) {
+            await apiRequest(`/api/students/${editingId}`, {
+                method: "PUT",
+                body: JSON.stringify(student)
+            });
+            showMessage("formMessage", "Student updated successfully.");
+        } else {
+            await apiRequest("/api/students", {
                 method: "POST",
                 body: JSON.stringify(student)
             });
-
-            showMessage("partnerMessage", "Partner student imported successfully.");
-            await loadStudents();
-        } catch (error) {
-            showMessage("partnerMessage", error.message, "error");
+            showMessage("formMessage", "Student saved successfully.");
         }
+
+        resetForm();
+        await loadStudents();
+    } catch (error) {
+        showMessage("formMessage", error.message, "error");
+    }
+});
+
+async function loadStudents() {
+    try {
+        const data = await apiRequest("/students");
+        students = Array.isArray(data) ? data : (data.students || []);
+        renderStudents();
+        updateStats();
+        updateSectionFilter();
+        clearMessage("listMessage");
+    } catch (error) {
+        showMessage("listMessage", error.message, "error");
+    }
+}
+
+function renderStudents() {
+    const query = document.getElementById("searchInput").value.toLowerCase();
+    const section = document.getElementById("sectionFilter").value;
+
+    const filtered = students.filter(student => {
+        const matchesSearch =
+            String(student.name || "").toLowerCase().includes(query) ||
+            String(student.student_id || "").toLowerCase().includes(query);
+
+        return matchesSearch && (!section || String(student.section) === section);
+    });
+
+    const container = document.getElementById("studentList");
+
+    if (!filtered.length) {
+        container.innerHTML = '<div class="empty">No matching student records found.</div>';
+        return;
     }
 
-    async function sendToPartner(id) {
-        const student = students.find(item => Number(item.id) === Number(id));
-        if (!student) return;
+    container.innerHTML = filtered.map(student => {
+        const source = student.source || "Manual Entry";
+        const sourceClass = source === "Partner API" ? "partner" :
+            source === "Imported Record" ? "imported" : "";
 
-        if (!confirm(`Send ${student.name}'s record to the partner API?`)) {
+        const initials = String(student.name || "S")
+            .trim()
+            .split(/\s+/)
+            .slice(0, 2)
+            .map(part => part[0] || "")
+            .join("")
+            .toUpperCase();
+
+        return `
+        <article class="student-card">
+            <div class="student-head">
+                <div class="student-avatar">${escapeHTML(initials)}</div>
+                <div>
+                    <h3>${escapeHTML(student.name)}</h3>
+                    <small>${escapeHTML(student.student_id)}</small>
+                </div>
+            </div>
+
+            <div class="details">
+                <div class="detail">
+                    <span>Program</span>
+                    <span>${escapeHTML(student.program)}</span>
+                </div>
+                <div class="detail">
+                    <span>Year Level</span>
+                    <span>${escapeHTML(student.year)}</span>
+                </div>
+                <div class="detail">
+                    <span>Section</span>
+                    <span>${escapeHTML(student.section)}</span>
+                </div>
+                <div class="detail">
+                    <span>Data Source</span>
+                    <span><span class="source ${sourceClass}">${escapeHTML(source)}</span></span>
+                </div>
+            </div>
+
+            <div class="card-actions">
+                <button class="btn btn-light btn-small"
+                    onclick="editStudent(${Number(student.id)})">Edit</button>
+                <button class="btn btn-light btn-small"
+                    onclick="sendToPartner(${Number(student.id)})">Send</button>
+                <button class="btn btn-danger btn-small"
+                    onclick="deleteStudent(${Number(student.id)})">Delete</button>
+            </div>
+        </article>`;
+    }).join("");
+}
+
+function updateStats() {
+    document.getElementById("totalCount").textContent = students.length;
+    document.getElementById("bsitCount").textContent =
+        students.filter(student => String(student.program).toUpperCase() === "BSIT").length;
+}
+
+function updateSectionFilter() {
+    const select = document.getElementById("sectionFilter");
+    const current = select.value;
+    const sections = [...new Set(students.map(s => String(s.section || "")).filter(Boolean))].sort();
+
+    select.innerHTML = '<option value="">All Sections</option>';
+
+    sections.forEach(section => {
+        const option = document.createElement("option");
+        option.value = section;
+        option.textContent = section;
+        select.appendChild(option);
+    });
+
+    if (sections.includes(current)) select.value = current;
+}
+
+function editStudent(id) {
+    const student = students.find(item => Number(item.id) === Number(id));
+    if (!student) return;
+
+    editingId = Number(id);
+    document.getElementById("student_id").value = student.student_id || "";
+    document.getElementById("name").value = student.name || "";
+    document.getElementById("program").value = student.program || "";
+    document.getElementById("year").value = String(student.year || "");
+    document.getElementById("section").value = student.section || "";
+
+    const source = student.source || "Manual Entry";
+    document.getElementById("source").value =
+        [...document.getElementById("source").options].some(o => o.value === source)
+            ? source : "Manual Entry";
+
+    document.getElementById("formTitle").textContent = "Edit Student";
+    document.getElementById("saveButton").textContent = "Update Student";
+    document.getElementById("cancelButton").style.display = "inline-block";
+
+    document.getElementById("studentForm").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+async function deleteStudent(id) {
+    if (!confirm("Are you sure you want to delete this student?")) return;
+
+    try {
+        await apiRequest(`/api/students/${id}`, { method: "DELETE" });
+        showMessage("listMessage", "Student deleted successfully.");
+        await loadStudents();
+    } catch (error) {
+        showMessage("listMessage", error.message, "error");
+    }
+}
+
+async function loadPartnerRecords() {
+    const container = document.getElementById("partnerList");
+    container.innerHTML = '<div class="empty">Loading partner records...</div>';
+    clearMessage("partnerMessage");
+
+    try {
+        const data = await apiRequest("/partner-records");
+        partnerRecords = Array.isArray(data) ? data : (data.students || []);
+        document.getElementById("partnerCount").textContent = partnerRecords.length;
+
+        if (!partnerRecords.length) {
+            container.innerHTML = '<div class="empty">No partner records were returned.</div>';
             return;
         }
 
-        try {
-            const result = await apiRequest("/send-to-partner", {
-                method: "POST",
-                body: JSON.stringify({ id })
-            });
+        container.innerHTML = partnerRecords.map((student, index) => {
+            const sid = student.student_id ?? student.id ?? "";
+            const name = student.name ?? student.student_name ?? "Unknown";
+            const program = student.program ?? student.course ?? "";
+            const year = student.year ?? student.year_level ?? "";
+            const section = student.section ?? "";
 
-            showMessage(
-                "listMessage",
-                result.message || "Student sent to partner successfully."
-            );
-        } catch (error) {
-            showMessage("listMessage", error.message, "error");
-        }
+            return `
+            <div class="partner-record">
+                <h3>${escapeHTML(name)}</h3>
+                <p>Student ID: ${escapeHTML(sid)}</p>
+                <p>Program: ${escapeHTML(program)}</p>
+                <p>Year: ${escapeHTML(year)}</p>
+                <p>Section: ${escapeHTML(section)}</p>
+                <p><span class="source partner">Partner API</span></p>
+                <button class="btn btn-small" style="width:100%;margin-top:7px"
+                    onclick="importPartnerStudent(${index})">Import to Local Database</button>
+            </div>`;
+        }).join("");
+    } catch (error) {
+        container.innerHTML = '<div class="empty">Unable to load partner records.</div>';
+        showMessage("partnerMessage", error.message, "error");
+    }
+}
+
+async function importPartnerStudent(index) {
+    const record = partnerRecords[index];
+    if (!record) return;
+
+    const student = {
+        student_id: record.student_id ?? record.id,
+        name: record.name ?? record.student_name,
+        program: record.program ?? record.course,
+        year: record.year ?? record.year_level,
+        section: record.section,
+        source: "Partner API"
+    };
+
+    if (!student.student_id || !student.name || !student.program ||
+        !student.year || !student.section) {
+        showMessage("partnerMessage",
+            "This partner record is missing required student information.", "error");
+        return;
     }
 
-    document.getElementById("searchInput").addEventListener("input", renderStudents);
-    document.getElementById("sectionFilter").addEventListener("change", renderStudents);
-
-    document.querySelectorAll(".nav-link").forEach(link => {
-        link.addEventListener("click", () => {
-            document.querySelectorAll(".nav-link").forEach(item =>
-                item.classList.remove("active")
-            );
-            link.classList.add("active");
+    try {
+        const result = await apiRequest("/import-student", {
+            method: "POST",
+            body: JSON.stringify(student)
         });
-    });
 
-    loadStudents();
+        showMessage("partnerMessage", result.message || "Partner student imported successfully.");
+        await loadStudents();
+    } catch (error) {
+        showMessage("partnerMessage", error.message, "error");
+    }
+}
+
+async function sendToPartner(id) {
+    if (!confirm("Send this student to the partner API?")) return;
+
+    try {
+        const result = await apiRequest("/send-to-partner", {
+            method: "POST",
+            body: JSON.stringify({ id })
+        });
+
+        showMessage("listMessage", result.message || "Student sent to partner successfully.");
+    } catch (error) {
+        showMessage("listMessage", error.message, "error");
+    }
+}
+
+document.getElementById("searchInput").addEventListener("input", renderStudents);
+document.getElementById("sectionFilter").addEventListener("change", renderStudents);
+
+loadStudents();
 </script>
 </body>
 </html>
