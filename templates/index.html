@@ -10,13 +10,13 @@
         :root {
             --primary: #4f46e5;
             --primary-dark: #3730a3;
-            --secondary: #7c3aed;
             --background: #f5f7ff;
             --surface: #ffffff;
             --text: #1e293b;
             --muted: #64748b;
             --border: #e2e8f0;
             --success: #059669;
+            --danger: #dc2626;
         }
 
         * {
@@ -36,8 +36,7 @@
             padding: 35px 20px 65px;
         }
 
-        .hero-inner,
-        .container {
+        .hero-inner, .container {
             width: min(1100px, 100%);
             margin: auto;
         }
@@ -48,7 +47,6 @@
             gap: 12px;
             font-size: 19px;
             font-weight: 800;
-            letter-spacing: 0.4px;
         }
 
         .brand-icon {
@@ -70,7 +68,6 @@
             color: #e0e7ff;
             line-height: 1.7;
             max-width: 600px;
-            margin-bottom: 0;
         }
 
         .container {
@@ -85,12 +82,15 @@
             margin-bottom: 25px;
         }
 
-        .stat-card {
+        .stat-card, .panel {
             background: var(--surface);
-            padding: 22px;
+            border: 1px solid var(--border);
             border-radius: 16px;
-            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.06);
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 5px 20px rgba(30, 41, 59, 0.05);
+        }
+
+        .stat-card {
+            padding: 22px;
         }
 
         .stat-label {
@@ -112,12 +112,8 @@
         }
 
         .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 17px;
             padding: 25px;
             margin-bottom: 22px;
-            box-shadow: 0 5px 20px rgba(30, 41, 59, 0.04);
         }
 
         .panel-heading {
@@ -157,55 +153,43 @@
             gap: 10px;
         }
 
-        input,
-        select {
-            min-height: 46px;
+        input, select {
+            min-height: 44px;
             padding: 11px 14px;
             border: 1px solid #cbd5e1;
             border-radius: 10px;
             background: white;
             color: var(--text);
-            font-size: 15px;
+            font-size: 14px;
             outline: none;
-        }
-
-        input {
             flex: 1;
-            min-width: 180px;
-        }
-
-        select {
             min-width: 150px;
         }
 
-        input:focus,
-        select:focus {
+        input:focus, select:focus {
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
         }
 
         button {
-            min-height: 44px;
+            min-height: 42px;
             border: 0;
-            border-radius: 10px;
-            padding: 11px 17px;
+            border-radius: 9px;
+            padding: 10px 15px;
             background: var(--primary);
             color: white;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
-            transition: transform 0.15s, background 0.15s;
         }
 
         button:hover {
             background: var(--primary-dark);
-            transform: translateY(-1px);
         }
 
         button:disabled {
             opacity: 0.6;
             cursor: wait;
-            transform: none;
         }
 
         .secondary-button {
@@ -215,6 +199,14 @@
 
         .secondary-button:hover {
             background: #e0e7ff;
+        }
+
+        .danger-button {
+            background: var(--danger);
+        }
+
+        .danger-button:hover {
+            background: #991b1b;
         }
 
         .results {
@@ -229,16 +221,10 @@
 
         .student-card {
             padding: 19px;
-            background: #fff;
+            background: white;
             border: 1px solid var(--border);
             border-radius: 14px;
-            transition: box-shadow 0.2s, transform 0.2s;
             min-width: 0;
-        }
-
-        .student-card:hover {
-            box-shadow: 0 8px 22px rgba(79, 70, 229, 0.09);
-            transform: translateY(-2px);
         }
 
         .student-top {
@@ -265,7 +251,6 @@
             font-size: 16px;
             font-weight: 800;
             overflow-wrap: anywhere;
-            text-transform: capitalize;
         }
 
         .student-number {
@@ -282,7 +267,6 @@
         .detail-row {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
             gap: 10px;
             font-size: 13px;
         }
@@ -307,6 +291,13 @@
             font-weight: 800;
         }
 
+        .card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
         .empty-state {
             text-align: center;
             color: var(--muted);
@@ -329,6 +320,13 @@
             border-radius: 9px;
         }
 
+        .success-text {
+            color: #047857;
+            background: #ecfdf5;
+            padding: 13px;
+            border-radius: 9px;
+        }
+
         .section-tag {
             display: inline-block;
             background: #f3e8ff;
@@ -337,7 +335,7 @@
             padding: 5px 9px;
             font-size: 12px;
             font-weight: 800;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         footer {
@@ -377,10 +375,6 @@
                 padding: 17px;
             }
 
-            .controls {
-                align-items: stretch;
-            }
-
             .controls input,
             .controls select,
             .controls button {
@@ -402,13 +396,15 @@
         <h1>Student Database</h1>
         <p>
             Manage, search, and explore student records in one place.
-            Access student information quickly using the database API.
+            Perform CRUD operations and retrieve data from another
+            student's API.
         </p>
     </div>
 </header>
 
 <main class="container">
 
+    <!-- Statistics -->
     <div class="stats">
         <div class="stat-card">
             <div class="stat-icon">👥</div>
@@ -425,7 +421,7 @@
         <div class="stat-card">
             <div class="stat-icon">🏫</div>
             <span class="stat-label">Sections</span>
-            <span class="stat-value">2</span>
+            <span class="stat-value" id="sectionCount">—</span>
         </div>
     </div>
 
@@ -436,7 +432,7 @@
             <div>
                 <h2>All Students</h2>
                 <p class="description">
-                    View all records saved in the SQLite database.
+                    View all records in your SQLite database.
                 </p>
             </div>
         </div>
@@ -448,7 +444,7 @@
         <div id="allStudents" class="results">
             <div class="empty-state">
                 <div class="empty-icon">📚</div>
-                Click "Load Students" to display student records.
+                Click "Load Students" to display records.
             </div>
         </div>
     </section>
@@ -460,7 +456,7 @@
             <div>
                 <h2>Find a Student</h2>
                 <p class="description">
-                    Search by database ID, such as 1, 2, 3, 4, or 5.
+                    Search using the database ID.
                 </p>
             </div>
         </div>
@@ -470,46 +466,156 @@
                 type="number"
                 id="studentId"
                 min="1"
-                placeholder="Enter database ID..."
-                aria-label="Database ID"
+                placeholder="Enter database ID"
                 required
             >
             <button type="submit">Search Student</button>
         </form>
 
-        <div id="studentResult" class="results" aria-live="polite">
+        <div id="studentResult" class="results">
             <div class="empty-state">
-                <div class="empty-icon">👤</div>
                 Search for a student to see their information.
             </div>
         </div>
     </section>
 
-    <!-- Additional task -->
+    <!-- Filter by section -->
     <section class="panel">
         <div class="panel-heading">
             <div class="panel-icon">🎯</div>
             <div>
-                <span class="section-tag">ADDITIONAL TASK</span>
                 <h2>Filter by Section</h2>
                 <p class="description">
-                    Display only the students belonging to your chosen section.
+                    Display students from a selected section.
                 </p>
             </div>
         </div>
 
         <form id="filterForm" class="controls">
-            <select id="sectionFilter" aria-label="Choose section">
-                <option value="A">Section A</option>
-                <option value="B">Section B</option>
-            </select>
+            <input
+                id="sectionFilter"
+                placeholder="Enter section (e.g. Dijkstra)"
+                required
+            >
             <button type="submit">Apply Filter</button>
         </form>
 
-        <div id="sectionResults" class="results" aria-live="polite">
+        <div id="sectionResults" class="results">
             <div class="empty-state">
-                <div class="empty-icon">🗂️</div>
                 Choose a section and click "Apply Filter".
+            </div>
+        </div>
+    </section>
+
+    <!-- CRUD interface -->
+    <section class="panel">
+        <div class="panel-heading">
+            <div class="panel-icon">📝</div>
+            <div>
+                <span class="section-tag">LABORATORY ACTIVITY 8</span>
+                <h2>Manage Student Records</h2>
+                <p class="description">
+                    Add, edit, view, and delete practice records
+                    in your own database.
+                </p>
+            </div>
+        </div>
+
+        <form id="crudForm">
+            <input type="hidden" id="editId">
+
+            <div class="controls">
+                <input
+                    id="crudStudentId"
+                    placeholder="Student ID"
+                    required
+                >
+                <input
+                    id="crudName"
+                    placeholder="Full Name"
+                    required
+                >
+                <input
+                    id="crudProgram"
+                    placeholder="Program (e.g. BSIT)"
+                    required
+                >
+                <input
+                    id="crudYear"
+                    type="number"
+                    min="1"
+                    placeholder="Year Level"
+                    required
+                >
+                <input
+                    id="crudSection"
+                    placeholder="Section"
+                    required
+                >
+            </div>
+
+            <div class="controls" style="margin-top: 12px;">
+                <button type="submit" id="saveStudentButton">
+                    Add Student
+                </button>
+
+                <button
+                    type="button"
+                    class="secondary-button"
+                    onclick="resetCrudForm()"
+                >
+                    Clear Form
+                </button>
+            </div>
+        </form>
+
+        <div id="crudMessage" aria-live="polite"></div>
+
+        <div id="crudStudents" class="results">
+            <div class="empty-state">
+                Click "Refresh My Records" to load your records.
+            </div>
+        </div>
+
+        <button
+            type="button"
+            class="secondary-button"
+            onclick="loadCrudStudents()"
+        >
+            Refresh My Records
+        </button>
+    </section>
+
+    <!-- Classmate records -->
+    <section class="panel">
+        <div class="panel-heading">
+            <div class="panel-icon">🌐</div>
+            <div>
+                <span class="section-tag">READ-ONLY</span>
+                <h2>Classmate's Records</h2>
+                <p class="description">
+                    Retrieve and view records from your classmate's
+                    deployed API. Remote records cannot be edited
+                    or deleted here.
+                </p>
+            </div>
+        </div>
+
+        <form id="classmateForm" class="controls">
+            <input
+                id="classmateUrl"
+                type="url"
+                placeholder="https://classmate-app.onrender.com/api/students"
+                required
+            >
+            <button type="submit">Load Classmate's Records</button>
+        </form>
+
+        <div id="classmateMessage" aria-live="polite"></div>
+
+        <div id="classmateStudents" class="results">
+            <div class="empty-state">
+                Enter your classmate's API URL to retrieve records.
             </div>
         </div>
     </section>
@@ -517,11 +623,12 @@
 </main>
 
 <footer>
-    <strong>StudentHub</strong> · Laboratory Activity 7<br>
-    SQLite Database and Flask REST API
+    <strong>StudentHub</strong> · Laboratory Activity 8<br>
+    CRUD Web Application and Cross-System Data Retrieval
 </footer>
 
 <script>
+    // Display a message safely
     function showMessage(container, message, isError = false) {
         container.replaceChildren();
 
@@ -532,6 +639,16 @@
         container.appendChild(box);
     }
 
+    // Display a status message
+    function setStatus(elementId, message, isError = false) {
+        const element = document.getElementById(elementId);
+        element.className = message
+            ? (isError ? "error-text" : "success-text")
+            : "";
+        element.textContent = message;
+    }
+
+    // Create a student card
     function createStudentCard(student) {
         const card = document.createElement("article");
         card.className = "student-card";
@@ -556,11 +673,12 @@
 
         const name = document.createElement("div");
         name.className = "student-name";
-        name.textContent = student.name;
+        name.textContent = student.name || "Unnamed Student";
 
         const number = document.createElement("div");
         number.className = "student-number";
-        number.textContent = "Student No. " + student.student_id;
+        number.textContent = "Student No. " +
+            (student.student_id ?? "N/A");
 
         heading.append(name, number);
         top.append(avatar, heading);
@@ -569,10 +687,10 @@
         details.className = "details";
 
         const rows = [
-            ["Database ID", student.id],
-            ["Program", student.program],
-            ["Year Level", student.year],
-            ["Section", student.section]
+            ["Database ID", student.id ?? "N/A"],
+            ["Program", student.program ?? "N/A"],
+            ["Year Level", student.year ?? "N/A"],
+            ["Section", student.section ?? "N/A"]
         ];
 
         rows.forEach(([label, value]) => {
@@ -585,13 +703,14 @@
 
             const valueElement = document.createElement("span");
             valueElement.className = "detail-value";
-            valueElement.textContent = value;
 
             if (label === "Section") {
                 const badge = document.createElement("span");
                 badge.className = "badge";
-                badge.textContent = "Section " + value;
-                valueElement.replaceChildren(badge);
+                badge.textContent = String(value);
+                valueElement.appendChild(badge);
+            } else {
+                valueElement.textContent = String(value);
             }
 
             row.append(labelElement, valueElement);
@@ -602,6 +721,7 @@
         return card;
     }
 
+    // Display multiple students
     function displayStudents(container, students) {
         container.replaceChildren();
 
@@ -620,24 +740,30 @@
         container.appendChild(grid);
     }
 
-    async function fetchJSON(url) {
-        const response = await fetch(url);
+    // Fetch JSON and handle errors
+    async function fetchJSON(url, options = {}) {
+        const response = await fetch(url, options);
 
         let data;
 
         try {
             data = await response.json();
         } catch {
-            throw new Error("The server returned an invalid response.");
+            throw new Error(
+                "The server returned an invalid response."
+            );
         }
 
         if (!response.ok) {
-            throw new Error(data.error || "Request failed.");
+            throw new Error(
+                data.error || data.message || "Request failed."
+            );
         }
 
         return data;
     }
 
+    // Load all students using the existing endpoint
     async function loadStudents() {
         const results = document.getElementById("allStudents");
         const button = document.getElementById("loadButton");
@@ -657,6 +783,14 @@
                 students.filter(student =>
                     String(student.program).toUpperCase() === "BSIT"
                 ).length;
+
+            const sections = new Set(
+                students.map(student => student.section)
+            );
+
+            document.getElementById("sectionCount").textContent =
+                sections.size;
+
         } catch (error) {
             showMessage(results, error.message, true);
         } finally {
@@ -665,6 +799,7 @@
         }
     }
 
+    // Search by database ID
     document.getElementById("searchForm")
         .addEventListener("submit", async function(event) {
             event.preventDefault();
@@ -673,11 +808,7 @@
             const result = document.getElementById("studentResult");
 
             if (!id || !Number.isInteger(Number(id)) || Number(id) < 1) {
-                showMessage(
-                    result,
-                    "Please enter a valid database ID.",
-                    true
-                );
+                showMessage(result, "Enter a valid database ID.", true);
                 return;
             }
 
@@ -694,14 +825,20 @@
             }
         });
 
+    // Filter students by section
     document.getElementById("filterForm")
         .addEventListener("submit", async function(event) {
             event.preventDefault();
 
             const section =
-                document.getElementById("sectionFilter").value;
+                document.getElementById("sectionFilter").value.trim();
 
             const results = document.getElementById("sectionResults");
+
+            if (!section) {
+                showMessage(results, "Enter a section.", true);
+                return;
+            }
 
             showMessage(results, "Filtering student records...");
 
@@ -715,6 +852,232 @@
                 showMessage(results, error.message, true);
             }
         });
+
+    // Reset the CRUD form
+    function resetCrudForm() {
+        document.getElementById("crudForm").reset();
+        document.getElementById("editId").value = "";
+        document.getElementById("saveStudentButton").textContent =
+            "Add Student";
+    }
+
+    // Load our own records with Edit and Delete controls
+    async function loadCrudStudents() {
+        const container = document.getElementById("crudStudents");
+
+        showMessage(container, "Loading your records...");
+
+        try {
+            const students = await fetchJSON("/api/students");
+
+            container.replaceChildren();
+
+            if (!Array.isArray(students) || students.length === 0) {
+                showMessage(container, "No student records found.");
+                return;
+            }
+
+            const grid = document.createElement("div");
+            grid.className = "results-grid";
+
+            students.forEach(student => {
+                const card = createStudentCard(student);
+
+                const actions = document.createElement("div");
+                actions.className = "card-actions";
+
+                // Edit button
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.textContent = "Edit";
+
+                editButton.addEventListener("click", function() {
+                    document.getElementById("editId").value = student.id;
+
+                    document.getElementById("crudStudentId").value =
+                        student.student_id ?? "";
+
+                    document.getElementById("crudName").value =
+                        student.name ?? "";
+
+                    document.getElementById("crudProgram").value =
+                        student.program ?? "";
+
+                    document.getElementById("crudYear").value =
+                        student.year ?? "";
+
+                    document.getElementById("crudSection").value =
+                        student.section ?? "";
+
+                    document.getElementById("saveStudentButton")
+                        .textContent = "Save Changes";
+
+                    document.getElementById("crudForm").scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                });
+
+                // Delete button
+                const deleteButton = document.createElement("button");
+                deleteButton.type = "button";
+                deleteButton.className = "danger-button";
+                deleteButton.textContent = "Delete";
+
+                deleteButton.addEventListener("click", async function() {
+                    if (!confirm(
+                        "Delete this practice student record?"
+                    )) {
+                        return;
+                    }
+
+                    try {
+                        const result = await fetchJSON(
+                            `/api/students/${student.id}`,
+                            { method: "DELETE" }
+                        );
+
+                        setStatus("crudMessage", result.message);
+
+                        resetCrudForm();
+                        await loadCrudStudents();
+                        await loadStudents();
+
+                    } catch (error) {
+                        setStatus("crudMessage", error.message, true);
+                    }
+                });
+
+                actions.append(editButton, deleteButton);
+                card.appendChild(actions);
+                grid.appendChild(card);
+            });
+
+            container.appendChild(grid);
+
+        } catch (error) {
+            showMessage(container, error.message, true);
+        }
+    }
+
+    // Create or update a student
+    document.getElementById("crudForm")
+        .addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const id = document.getElementById("editId").value;
+
+            const studentData = {
+                student_id:
+                    document.getElementById("crudStudentId").value.trim(),
+
+                name:
+                    document.getElementById("crudName").value.trim(),
+
+                program:
+                    document.getElementById("crudProgram").value.trim(),
+
+                year:
+                    Number(document.getElementById("crudYear").value),
+
+                section:
+                    document.getElementById("crudSection").value.trim()
+            };
+
+            const message = document.getElementById("crudMessage");
+            const button =
+                document.getElementById("saveStudentButton");
+
+            if (
+                !studentData.student_id ||
+                !studentData.name ||
+                !studentData.program ||
+                !studentData.section ||
+                !Number.isInteger(studentData.year) ||
+                studentData.year < 1
+            ) {
+                setStatus(
+                    "crudMessage",
+                    "Please enter valid information in every field.",
+                    true
+                );
+                return;
+            }
+
+            button.disabled = true;
+
+            try {
+                const result = await fetchJSON(
+                    id ? `/api/students/${encodeURIComponent(id)}`
+                       : "/api/students",
+                    {
+                        method: id ? "PUT" : "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(studentData)
+                    }
+                );
+
+                setStatus("crudMessage", result.message);
+
+                resetCrudForm();
+                await loadCrudStudents();
+                await loadStudents();
+
+            } catch (error) {
+                setStatus("crudMessage", error.message, true);
+            } finally {
+                button.disabled = false;
+            }
+        });
+
+    // Retrieve classmate records.
+    // This section is read-only: it never sends POST, PUT, or DELETE.
+    document.getElementById("classmateForm")
+        .addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const url =
+                document.getElementById("classmateUrl").value.trim();
+
+            const container =
+                document.getElementById("classmateStudents");
+
+            setStatus("classmateMessage", "");
+            showMessage(container, "Retrieving classmate records...");
+
+            try {
+                const students = await fetchJSON(url);
+
+                if (!Array.isArray(students)) {
+                    throw new Error(
+                        "The classmate API did not return a list of records."
+                    );
+                }
+
+                displayStudents(container, students);
+
+                setStatus(
+                    "classmateMessage",
+                    `Successfully retrieved ${students.length} record(s).`
+                );
+
+            } catch (error) {
+                showMessage(
+                    container,
+                    "Unable to retrieve records. Check the API URL, " +
+                    "availability, and CORS settings. " + error.message,
+                    true
+                );
+            }
+        });
+
+    // Load records when the page opens
+    document.addEventListener("DOMContentLoaded", function() {
+        loadStudents();
+        loadCrudStudents();
+    });
 </script>
 
 </body>
