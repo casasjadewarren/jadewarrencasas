@@ -1,14 +1,29 @@
 
+import os
 import sqlite3
-import json
-import urllib.request
-from urllib.parse import urlparse
+import requests
+
 from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 
-DATABASE = "students.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATABASE = os.path.join(BASE_DIR, "students.db")
 
+# Hmar's API endpoints
+PARTNER_READ_URL = "https://hemarpaulabian.onrender.com/students"
+PARTNER_POST_URL = "https://hemarpaulabian.onrender.com/api/students"
+
+REQUIRED_FIELDS = [
+    "student_id",
+    "name",
+    "program",
+    "year",
+    "section"
+]
+
+
+# ---------------- DATABASE ----------------
 
 def get_db_connection():
     conn = sqlite3.connect(DATABASE)
@@ -16,231 +31,330 @@ def get_db_connection():
     return conn
 
 
-# Home page
+def student_dict(row):
+    return dict(row) if row else None
+
+
+def validate_student(data):
+    if not isinstance(data, dict):
+        return "JSON object is required."
+
+    for field in REQUIRED_FIELDS:
+        if field not in data or data[field] is None:
+            return f"Missing required field: {field}"
+
+        if str(data[field]).strip() == "":
+            return f"{field} cannot be empty."
+
+    try:
+        year = int(data["year"])
+        if year < 1:
+            return "Year must be a positive number."
+    except (ValueError, TypeError):
+        return "Year must be a valid integer."
+
+    return None
+
+
+def insert_student(data):
+    """Insert a student using the existing five-column schema."""
+    conn = get_db_connection()
+
+    try:
+        cursor = conn.execute(
+            """
+            INSERT INTO students
+            (student_id, name, program, year, section)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (
+                str(data["student_id"]).strip(),
+                str(data["name"]).strip(),
+                str(data["program"]).strip(),
+                int(data["year"]),
+                str(data["section"]).strip()
+            )
+        )
+
+        conn.commit()
+        return cursor.lastrowid
+    finally:
+        conn.close()
+
+
+# ---------------- HOME PAGE ----------------
+
 @app.route("/")
 def home():
     return render_template("index.html")
 
 
+# ---------------- STUDENT CRUD ----------------
+
 # Get all students
-@app.route("/students")
+@app.route("/students", methods=["GET"])
 def get_students():
     conn = get_db_connection()
-    students = conn.execute(
-        "SELECT * FROM students ORDER BY id"
-    ).fetchall()
-    conn.close()
 
-    return jsonify([dict(student) for student in students])
+    try:
+        rows = conn.execute(
+            "SELECT * FROM students ORDER BY id DESC"
+        ).fetchall()
+
+        return jsonify([student_dict(row) for row in rows])
+    finally:
+        conn.close()
 
 
 # Get one student by database ID
-@app.route("/students/<int:id>")
-def get_student_by_id(id):
+@app.route("/students/<int:student_id>", methods=["GET"])
+def get_student(student_id):
     conn = get_db_connection()
-    student = conn.execute(
-        "SELECT * FROM students WHERE id = ?", (id,)
-    ).fetchone()
-    conn.close()
 
-    if student is None:
-        return jsonify({"error": "Student not found"}), 404
+    try:
+        row = conn.execute(
+            "SELECT * FROM students WHERE id = ?",
+            (student_id,)
+        ).fetchone()
 
-    return jsonify(dict(student))
+        if row is None:
+            return jsonify({"error": "Student not found"}), 404
+
+        return jsonify(student_dict(row))
+    finally:
+        conn.close()
 
 
 # Get students by section
-@app.route("/students/section/<string:section>")
+@app.route("/students/section/<string:section>", methods=["GET"])
 def get_students_by_section(section):
     conn = get_db_connection()
-    students = conn.execute(
-        "SELECT * FROM students WHERE section = ? ORDER BY id",
-        (section,)
-    ).fetchall()
-    conn.close()
 
-    return jsonify([dict(student) for student in students])
+    try:
+        rows = conn.execute(
+            "SELECT * FROM students WHERE section = ? ORDER BY id",
+            (section,)
+        ).fetchall()
+
+        return jsonify([student_dict(row) for row in rows])
+    finally:
+        conn.close()
 
 
-# API: Read all students
+# Get all students through the API
 @app.route("/api/students", methods=["GET"])
-def api_students():
-    conn = get_db_connection()
-    students = conn.execute(
-        "SELECT * FROM students ORDER BY id"
-    ).fetchall()
-    conn.close()
-
-    return jsonify([dict(student) for student in students])
+def api_get_students():
+    return get_students()
 
 
-# API: Create a student
+# Create a student or receive a record from Hmar
 @app.route("/api/students", methods=["POST"])
 def add_student():
     data = request.get_json(silent=True)
 
-    if not data:
-        return jsonify({"error": "JSON data is required"}), 400
-
-    required_fields = [
-        "student_id", "name", "program", "year", "section"
-    ]
-
-    if any(field not in data for field in required_fields):
-        return jsonify({"error": "Missing required student fields"}), 400
-
-    conn = get_db_connection()
-
-    cursor = conn.execute(
-        """
-        INSERT INTO students
-        (student_id, name, program, year, section)
-        VALUES (?, ?, ?, ?, ?)
-        """,
-        (
-            data["student_id"],
-            data["name"],
-            data["program"],
-            data["year"],
-            data["section"]
-        )
-    )
-
-    conn.commit()
-    new_id = cursor.lastrowid
-    conn.close()
-
-    return jsonify({
-        "message": "Student added",
-        "id": new_id
-    }), 201
-
-
-# API: Read one student
-@app.route("/api/students/<int:id>", methods=["GET"])
-def api_get_student(id):
-    conn = get_db_connection()
-    student = conn.execute(
-        "SELECT * FROM students WHERE id = ?", (id,)
-    ).fetchone()
-    conn.close()
-
-    if student is None:
-        return jsonify({"error": "Student not found"}), 404
-
-    return jsonify(dict(student))
-
-
-# API: Update a student
-@app.route("/api/students/<int:id>", methods=["PUT"])
-def update_student(id):
-    data = request.get_json(silent=True)
-
-    if not data:
-        return jsonify({"error": "JSON data is required"}), 400
-
-    required_fields = [
-        "student_id", "name", "program", "year", "section"
-    ]
-
-    if any(field not in data for field in required_fields):
-        return jsonify({"error": "Missing required student fields"}), 400
-
-    conn = get_db_connection()
-
-    cursor = conn.execute(
-        """
-        UPDATE students
-        SET student_id = ?, name = ?, program = ?,
-            year = ?, section = ?
-        WHERE id = ?
-        """,
-        (
-            data["student_id"],
-            data["name"],
-            data["program"],
-            data["year"],
-            data["section"],
-            id
-        )
-    )
-
-    conn.commit()
-    updated = cursor.rowcount
-    conn.close()
-
-    if updated == 0:
-        return jsonify({"error": "Student not found"}), 404
-
-    return jsonify({"message": "Student updated"})
-
-
-# API: Delete a student
-@app.route("/api/students/<int:id>", methods=["DELETE"])
-def delete_student(id):
-    conn = get_db_connection()
-    cursor = conn.execute(
-        "DELETE FROM students WHERE id = ?", (id,)
-    )
-
-    conn.commit()
-    deleted = cursor.rowcount
-    conn.close()
-
-    if deleted == 0:
-        return jsonify({"error": "Student not found"}), 404
-
-    return jsonify({"message": "Student deleted"})
-
-
-# API: Retrieve classmate's students through your Flask server
-@app.route("/api/classmate", methods=["GET"])
-def classmate_proxy():
-    url = request.args.get("url", "").strip()
-    parsed = urlparse(url)
-
-    # Allow only the approved classmate API URL
-    if (
-        parsed.scheme != "https"
-        or parsed.netloc != "hemarpaulabian.onrender.com"
-        or parsed.path != "/students"
-        or parsed.query
-        or parsed.fragment
-        or parsed.username
-        or parsed.password
-    ):
-        return jsonify({
-            "error": "Enter the approved classmate HTTPS API URL."
-        }), 400
+    error = validate_student(data)
+    if error:
+        return jsonify({"error": error}), 400
 
     try:
-        with urllib.request.urlopen(url, timeout=15) as response:
-            if response.status != 200:
-                return jsonify({
-                    "error": "The classmate API returned an error."
-                }), 502
+        new_id = insert_student(data)
 
-            body = response.read(1_000_001)
-
-        if len(body) > 1_000_000:
-            return jsonify({
-                "error": "The classmate API response is too large."
-            }), 502
-
-        students = json.loads(body.decode("utf-8"))
-
-        if not isinstance(students, list):
-            return jsonify({
-                "error": "The classmate API must return a list of students."
-            }), 502
-
-        return jsonify(students)
-
-    except Exception:
         return jsonify({
-            "error": "Could not retrieve the classmate API. Check its URL and availability."
+            "message": "Student added successfully",
+            "id": new_id,
+            "student": data
+        }), 201
+
+    except sqlite3.Error:
+        app.logger.exception("Could not insert student")
+        return jsonify({"error": "Database error"}), 500
+
+
+# Get, update, or delete one student through the API
+@app.route("/api/students/<int:student_id>", methods=["GET", "PUT", "DELETE"])
+def manage_student(student_id):
+    conn = get_db_connection()
+
+    try:
+        row = conn.execute(
+            "SELECT * FROM students WHERE id = ?",
+            (student_id,)
+        ).fetchone()
+
+        if row is None:
+            return jsonify({"error": "Student not found"}), 404
+
+        if request.method == "GET":
+            return jsonify(student_dict(row))
+
+        if request.method == "PUT":
+            data = request.get_json(silent=True)
+
+            error = validate_student(data)
+            if error:
+                return jsonify({"error": error}), 400
+
+            conn.execute(
+                """
+                UPDATE students
+                SET student_id = ?, name = ?, program = ?,
+                    year = ?, section = ?
+                WHERE id = ?
+                """,
+                (
+                    str(data["student_id"]).strip(),
+                    str(data["name"]).strip(),
+                    str(data["program"]).strip(),
+                    int(data["year"]),
+                    str(data["section"]).strip(),
+                    student_id
+                )
+            )
+            conn.commit()
+
+            return jsonify({
+                "message": "Student updated successfully",
+                "id": student_id
+            })
+
+        conn.execute(
+            "DELETE FROM students WHERE id = ?",
+            (student_id,)
+        )
+        conn.commit()
+
+        return jsonify({"message": "Student deleted successfully"})
+
+    except sqlite3.Error:
+        app.logger.exception("Database operation failed")
+        return jsonify({"error": "Database error"}), 500
+    finally:
+        conn.close()
+
+
+# ---------------- LAB 9: READ PARTNER RECORDS ----------------
+
+@app.route("/partner-records", methods=["GET"])
+def partner_records():
+    try:
+        response = requests.get(PARTNER_READ_URL, timeout=30)
+        response.raise_for_status()
+        data = response.json()
+
+        # Accept either a list or a {"students": [...]} response.
+        if isinstance(data, dict) and isinstance(data.get("students"), list):
+            data = data["students"]
+
+        if not isinstance(data, list):
+            return jsonify({
+                "error": "Partner API did not return a student list."
+            }), 502
+
+        return jsonify(data)
+
+    except (requests.RequestException, ValueError):
+        app.logger.exception("Could not retrieve partner records")
+        return jsonify({
+            "error": "Unable to retrieve Hmar's records. Try again later."
         }), 502
 
 
+# ---------------- LAB 9: IMPORT PARTNER RECORD ----------------
+
+@app.route("/import-student", methods=["POST"])
+def import_student():
+    data = request.get_json(silent=True)
+
+    error = validate_student(data)
+    if error:
+        return jsonify({"error": error}), 400
+
+    try:
+        new_id = insert_student(data)
+
+        return jsonify({
+            "message": "Partner record imported successfully",
+            "id": new_id,
+            "student": data
+        }), 201
+
+    except sqlite3.Error:
+        app.logger.exception("Could not import partner record")
+        return jsonify({"error": "Database error"}), 500
+
+
+# ---------------- LAB 9: SEND RECORD TO PARTNER ----------------
+
+@app.route("/send-to-partner", methods=["POST"])
+def send_to_partner():
+    request_data = request.get_json(silent=True) or {}
+    local_id = request_data.get("id")
+
+    if local_id is None:
+        return jsonify({
+            "error": "Provide the local student database ID in JSON."
+        }), 400
+
+    try:
+        local_id = int(local_id)
+    except (ValueError, TypeError):
+        return jsonify({"error": "Student ID must be an integer."}), 400
+
+    conn = get_db_connection()
+
+    try:
+        row = conn.execute(
+            "SELECT * FROM students WHERE id = ?",
+            (local_id,)
+        ).fetchone()
+    finally:
+        conn.close()
+
+    if row is None:
+        return jsonify({"error": "Student not found"}), 404
+
+    student = student_dict(row)
+
+    # Send only the fields expected by the partner API.
+    record = {
+        field: student[field]
+        for field in REQUIRED_FIELDS
+    }
+
+    try:
+        response = requests.post(
+            PARTNER_POST_URL,
+            json=record,
+            timeout=30
+        )
+
+        try:
+            partner_response = response.json()
+        except ValueError:
+            partner_response = response.text[:1000]
+
+        if not response.ok:
+            return jsonify({
+                "error": "Partner API rejected the record.",
+                "partner_status": response.status_code,
+                "partner_response": partner_response
+            }), 502
+
+        return jsonify({
+            "message": "Student record sent to Hmar successfully.",
+            "partner_status": response.status_code,
+            "partner_response": partner_response
+        }), 200
+
+    except requests.RequestException:
+        app.logger.exception("Could not send record to partner")
+        return jsonify({
+            "error": "Could not connect to Hmar's API. Try again later."
+        }), 502
+
+
+# ---------------- RUN APPLICATION ----------------
+
 if __name__ == "__main__":
     app.run(debug=True)
+

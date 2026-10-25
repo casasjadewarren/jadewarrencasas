@@ -1,7 +1,8 @@
-
+import request
 import os
 import sqlite3
-
+PARTNER_URL = "https://hemarpaulabian.onrender.com/students"
+PARTNER_POST_URL = "https://hemarpaulabian.onrender.com/api/students"
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATABASE = os.path.join(BASE_DIR, "students.db")
 
