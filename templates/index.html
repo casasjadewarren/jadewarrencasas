@@ -1048,8 +1048,8 @@
             showMessage(container, "Retrieving classmate records...");
 
             try {
-                const students = await fetchJSON(url);
-
+              const proxyUrl = "/api/classmate?url=" + encodeURIComponent(url);
+const students = await fetchJSON(proxyUrl);
                 if (!Array.isArray(students)) {
                     throw new Error(
                         "The classmate API did not return a list of records."
